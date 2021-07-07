@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Sensor Check App</string>
+    <string name="stopService">Stop service</string>
+</resources>

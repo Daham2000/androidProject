@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="30dp"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        //accelerometer programme
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Accelerometer" />
+        <LinearLayout
+            android:id="@+id/layoutOne"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <!--    x value field-->
+            <TextView
+                android:id="@+id/xValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content" />
+
+            <!--    y value field-->
+            <TextView
+                android:id="@+id/yValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp" />
+
+            <!--    z value field-->
+            <TextView
+                android:id="@+id/zValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp" />
+
+        </LinearLayout>
+
+        //Gyroscope programme
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="Gyroscope" />
+
+        <LinearLayout
+            android:id="@+id/layoutTwo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!--    x value field-->
+            <TextView
+                android:id="@+id/xGyroValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content" />
+
+            <!--    y value field-->
+            <TextView
+                android:id="@+id/yGyroValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp" />
+
+            <!--    z value field-->
+            <TextView
+                android:id="@+id/zGyroValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp" />
+
+        </LinearLayout>
+
+        //Magnetometer programme
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="Magnetometer" />
+
+        <LinearLayout
+            android:id="@+id/layoutThree"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!--    x value field-->
+            <TextView
+                android:id="@+id/xMagnetoMeterValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content" />
+
+            <!--    y value field-->
+            <TextView
+                android:id="@+id/yMagnetoMeterValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp" />
+
+            <!--    z value field-->
+            <TextView
+                android:id="@+id/zMagnetoMeterValue"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutFour"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical">
+
+            <!--    light value field-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Light" />
+
+            <TextView
+                android:id="@+id/light"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content" />
+
+            <!--    pressure value field-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Pressure" />
+
+            <TextView
+                android:id="@+id/pressure"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content" />
+
+            <!--    temp value field-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Temp" />
+
+            <TextView
+                android:id="@+id/temp"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content" />
+
+            <!--            humidity-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Humidity" />
+
+            <TextView
+                android:id="@+id/humidity"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content" />
+
+            <!--            PROXIMITY-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Proximity" />
+
+            <TextView
+                android:id="@+id/proximity"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/stopBtnID"
+                android:layout_width="wrap_content"
+                android:backgroundTint="@color/teal_700"
+                android:layout_height="50dp"
+                android:textSize="15dp"
+                android:text="@string/stopService" />
+
+        </LinearLayout>
+"
+    </LinearLayout>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
