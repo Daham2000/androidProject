@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.demoproject.api.RestApi;
+import com.example.demoproject.memory.SharedPreferenceMemory;
+import com.example.demoproject.model.SensorModel;
 import com.example.demoproject.service.ForegroundService;
 
 import java.util.HashMap;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     TimerTask timerTaskShared;
     //used to save data in phone memory
     SharedPreferences sharedPreferences;
+    SharedPreferenceMemory preferenceMemory;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -171,9 +174,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         sharedPreferences = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-
+        preferenceMemory = new SharedPreferenceMemory(sharedPreferences);
         //post request sent
-        startTimer(this);
+        startTimer();
 
         //Notification service here
         Intent intent = new Intent(this, ForegroundService.class);
@@ -197,19 +200,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         restApi.sendRequestPost(this, params);
     }
 
-    void saveInShared() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("accelerometerX", xValue.getText().toString());
-        editor.putString("accelerometerY", xValue.getText().toString());
-        editor.putString("accelerometerZ", xValue.getText().toString());
-        editor.putString("gyroscopeX", gyXValue.getText().toString());
-        editor.putString("gyroscopeY", gYValue.getText().toString());
-        editor.putString("gyroscopeZ", gyZValue.getText().toString());
-        editor.commit();
-        Log.d(TAG, "Saved in Shared");
-    }
-
-    private void startTimer(Context ctx) {
+    private void startTimer() {
         timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -219,7 +210,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         timerTaskShared = new TimerTask() {
             @Override
             public void run() {
-                saveInShared();
+                preferenceMemory.saveInShared(new SensorModel(
+                        xValue.getText().toString(),
+                        xValue.getText().toString(),
+                        xValue.getText().toString(),
+                        gyXValue.getText().toString(),
+                        gYValue.getText().toString(),
+                        gyZValue.getText().toString()
+                ));
             }
         };
         timer.scheduleAtFixedRate(timerTaskShared, 0, 10000);
