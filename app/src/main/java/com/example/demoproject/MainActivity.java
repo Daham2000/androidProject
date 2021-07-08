@@ -1,7 +1,6 @@
 package com.example.demoproject;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
@@ -12,13 +11,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.demoproject.api.RestApi;
 import com.example.demoproject.memory.SharedPreferenceMemory;
@@ -31,15 +26,9 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    private static final String TAG = "MainActivity";
-
-    //sensor manager references
-    private SensorManager sensorManager;
     //RestAPI model object
     RestApi restApi = new RestApi();
 
-    //declare sensor variables
-    private Sensor accelerometer, gyroscope, magnetometer, light, pressure, temp, humidity, proximity;
     HashMap<String, String> params = new HashMap<>();
     //define TextView values
     TextView xValue, yValue, zValue, gyXValue, gYValue, gyZValue, maXValue, maYValue, maZValue,
@@ -64,31 +53,33 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //get request sent
         restApi.sendRequestGet(this);
 
-        stopBtn = (Button) findViewById(R.id.stopBtnID);
+        stopBtn = findViewById(R.id.stopBtnID);
 
         //initialize texView values
-        xValue = (TextView) findViewById(R.id.xValue);
-        yValue = (TextView) findViewById(R.id.yValue);
-        zValue = (TextView) findViewById(R.id.zValue);
+        xValue = findViewById(R.id.xValue);
+        yValue = findViewById(R.id.yValue);
+        zValue = findViewById(R.id.zValue);
 
-        gyXValue = (TextView) findViewById(R.id.xGyroValue);
-        gYValue = (TextView) findViewById(R.id.yGyroValue);
-        gyZValue = (TextView) findViewById(R.id.zGyroValue);
+        gyXValue = findViewById(R.id.xGyroValue);
+        gYValue =  findViewById(R.id.yGyroValue);
+        gyZValue = findViewById(R.id.zGyroValue);
 
-        maXValue = (TextView) findViewById(R.id.xMagnetoMeterValue);
-        maYValue = (TextView) findViewById(R.id.yMagnetoMeterValue);
-        maZValue = (TextView) findViewById(R.id.zMagnetoMeterValue);
+        maXValue = findViewById(R.id.xMagnetoMeterValue);
+        maYValue = findViewById(R.id.yMagnetoMeterValue);
+        maZValue =  findViewById(R.id.zMagnetoMeterValue);
 
-        lightValue = (TextView) findViewById(R.id.light);
-        pressureValue = (TextView) findViewById(R.id.pressure);
-        tempValue = (TextView) findViewById(R.id.temp);
-        humidityValue = (TextView) findViewById(R.id.humidity);
-        proximityValue = (TextView) findViewById(R.id.proximity);
+        lightValue = findViewById(R.id.light);
+        pressureValue =findViewById(R.id.pressure);
+        tempValue = findViewById(R.id.temp);
+        humidityValue = findViewById(R.id.humidity);
+        proximityValue =  findViewById(R.id.proximity);
 
         //initialize sensor manager
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        //sensor manager references
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         //get the sensor accelerometer
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        //declare sensor variables
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (accelerometer != null) {
             //register listener sensor manager
             sensorManager.registerListener(MainActivity.this, accelerometer,
@@ -100,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //get the sensor Gyroscope
-        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        Sensor gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if (gyroscope != null) {
             //register listener sensor manager
             sensorManager.registerListener(MainActivity.this, gyroscope,
@@ -112,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //get the sensor Magnetometer
-        magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         if (magnetometer != null) {
             //register listener sensor manager
             sensorManager.registerListener(MainActivity.this, magnetometer,
@@ -124,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //get the sensor Light
-        light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        Sensor light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (light != null) {
             //register listener sensor manager
             sensorManager.registerListener(MainActivity.this, light,
@@ -134,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //get the Pressure
-        pressure = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        Sensor pressure = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         if (pressure != null) {
             //register listener sensor manager
             sensorManager.registerListener(MainActivity.this, pressure,
@@ -144,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //get the Temperature sensor
-        temp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        Sensor temp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         if (temp != null) {
             //register listener sensor manager
             sensorManager.registerListener(MainActivity.this, temp,
@@ -154,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //get the Humidity sensor
-        humidity = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        Sensor humidity = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         if (humidity != null) {
             //register listener sensor manager
             sensorManager.registerListener(MainActivity.this, humidity,
@@ -164,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //get the proximity sensor
-        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        Sensor proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         if (proximity != null) {
             //register listener sensor manager
             sensorManager.registerListener(MainActivity.this, proximity,
@@ -182,11 +173,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Intent intent = new Intent(this, ForegroundService.class);
         ContextCompat.startForegroundService(this, intent);
 
-        stopBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                stopService(intent);
-            }
-        });
+        stopBtn.setOnClickListener(v -> stopService(intent));
     }
 
     void callRestAPI() {
