@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.TextView;
 
-public class GyroscopeSensorManage implements SensorEventListener {
+public class MagnetometerSensorManage implements SensorEventListener {
 
     private SensorManager sensorManager;
     private TextView yValueView;
@@ -17,21 +17,21 @@ public class GyroscopeSensorManage implements SensorEventListener {
     private int yValue;
     private int zValue;
 
-    public GyroscopeSensorManage(SensorManager sensorManager, TextView yValue, TextView xValue, TextView zValue) {
+    public MagnetometerSensorManage(SensorManager sensorManager, TextView yValue, TextView xValue, TextView zValue) {
         this.sensorManager = sensorManager;
         this.yValueView = yValue;
         this.xValueView = xValue;
         this.zValueView = zValue;
-        Sensor gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        if (gyroscope != null) {
+        if (magnetometer != null) {
             //register listener sensor manager
-            sensorManager.registerListener(GyroscopeSensorManage.this, gyroscope,
+            sensorManager.registerListener(MagnetometerSensorManage.this, magnetometer,
                     SensorManager.SENSOR_DELAY_NORMAL);
         } else {
-            xValueView.setText("Gyroscope not support...");
-            yValueView.setText("Gyroscope not support...");
-            zValueView.setText("Gyroscope not support...");
+            xValueView.setText("Magnetometer not support...");
+            yValueView.setText("Magnetometer not support...");
+            zValueView.setText("Magnetometer not support...");
         }
     }
 
