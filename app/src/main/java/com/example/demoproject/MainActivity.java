@@ -1,7 +1,6 @@
 package com.example.demoproject;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,31 +17,36 @@ import android.widget.TextView;
 import com.example.demoproject.api.RestApi;
 import com.example.demoproject.memory.SharedPreferenceMemory;
 import com.example.demoproject.model.SensorModel;
-import com.example.demoproject.service.ForegroundService;
+import com.example.demoproject.service.BackgroundService;
 
 import java.util.HashMap;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     //RestAPI model object
-    RestApi restApi = new RestApi();
+    private final RestApi restApi = new RestApi();
 
-    HashMap<String, String> params = new HashMap<>();
+    private final HashMap<String, String> params = new HashMap<>();
+
     //define TextView values
-    TextView xValue, yValue, zValue, gyXValue, gYValue, gyZValue, maXValue, maYValue, maZValue,
-            lightValue, pressureValue, tempValue, humidityValue, proximityValue;
-
-    Button stopBtn;
+    private TextView yValue;
+    private TextView xValue;
+    private TextView zValue;
+    private TextView gyXValue;
+    private TextView gYValue;
+    private TextView gyZValue;
+    private TextView maXValue;
+    private TextView maYValue;
+    private TextView maZValue;
+    private TextView lightValue;
+    private TextView pressureValue;
+    private TextView tempValue;
+    private TextView humidityValue;
+    private TextView proximityValue;
 
     //for scheduled tasked
-    Timer timer = new Timer();
-    TimerTask timerTask;
-    TimerTask timerTaskShared;
-    //used to save data in phone memory
-    SharedPreferences sharedPreferences;
-    SharedPreferenceMemory preferenceMemory;
+    private SharedPreferenceMemory preferenceMemory;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -50,10 +54,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //get request sent
-        restApi.sendRequestGet(this);
-
-        stopBtn = findViewById(R.id.stopBtnID);
+        Button stopBtn = findViewById(R.id.stopBtnID);
 
         //initialize texView values
         xValue = findViewById(R.id.xValue);
@@ -61,46 +62,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         zValue = findViewById(R.id.zValue);
 
         gyXValue = findViewById(R.id.xGyroValue);
-        gYValue =  findViewById(R.id.yGyroValue);
+        gYValue = findViewById(R.id.yGyroValue);
         gyZValue = findViewById(R.id.zGyroValue);
 
         maXValue = findViewById(R.id.xMagnetoMeterValue);
         maYValue = findViewById(R.id.yMagnetoMeterValue);
-        maZValue =  findViewById(R.id.zMagnetoMeterValue);
+        maZValue = findViewById(R.id.zMagnetoMeterValue);
 
         lightValue = findViewById(R.id.light);
-        pressureValue =findViewById(R.id.pressure);
+        pressureValue = findViewById(R.id.pressure);
         tempValue = findViewById(R.id.temp);
         humidityValue = findViewById(R.id.humidity);
-        proximityValue =  findViewById(R.id.proximity);
+        proximityValue = findViewById(R.id.proximity);
 
         //initialize sensor manager
         //sensor manager references
-        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        final SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         //get the sensor accelerometer
         //declare sensor variables
-        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (accelerometer != null) {
-            //register listener sensor manager
-            sensorManager.registerListener(MainActivity.this, accelerometer,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            xValue.setText("Accelerometer not support...");
-            yValue.setText("Accelerometer not support...");
-            zValue.setText("Accelerometer not support...");
-        }
 
         //get the sensor Gyroscope
-        Sensor gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        if (gyroscope != null) {
-            //register listener sensor manager
-            sensorManager.registerListener(MainActivity.this, gyroscope,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            gyXValue.setText("Gyroscope not support...");
-            gYValue.setText("Gyroscope not support...");
-            gyZValue.setText("Gyroscope not support...");
-        }
 
         //get the sensor Magnetometer
         Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -164,51 +145,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             proximityValue.setText("Proximity not support...");
         }
 
-        sharedPreferences = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
+        //used to save data in phone memory
+        SharedPreferences sharedPreferences = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
         preferenceMemory = new SharedPreferenceMemory(sharedPreferences);
-        //post request sent
-        startTimer();
 
-        //Notification service here
-        Intent intent = new Intent(this, ForegroundService.class);
-        ContextCompat.startForegroundService(this, intent);
+        //Background service here
+        Intent intent = new Intent(this, BackgroundService.class);
+        startService(intent);
 
         stopBtn.setOnClickListener(v -> stopService(intent));
-    }
-
-    void callRestAPI() {
-        SharedPreferences sp = getApplicationContext().getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        params.put("accelerometerX", sp.getString("accelerometerX", ""));
-        params.put("accelerometerY", sp.getString("accelerometerY", ""));
-        params.put("accelerometerZ", sp.getString("accelerometerZ", ""));
-        params.put("gyroscopeX", sp.getString("gyroscopeX", ""));
-        params.put("gyroscopeY", sp.getString("gyroscopeY", ""));
-        params.put("gyroscopeZ", sp.getString("gyroscopeZ", ""));
-        restApi.sendRequestPost(this, params);
-    }
-
-    private void startTimer() {
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                callRestAPI();
-            }
-        };
-        timerTaskShared = new TimerTask() {
-            @Override
-            public void run() {
-                preferenceMemory.saveInShared(new SensorModel(
-                        xValue.getText().toString(),
-                        xValue.getText().toString(),
-                        xValue.getText().toString(),
-                        gyXValue.getText().toString(),
-                        gYValue.getText().toString(),
-                        gyZValue.getText().toString()
-                ));
-            }
-        };
-        timer.scheduleAtFixedRate(timerTaskShared, 0, 10000);
-        timer.scheduleAtFixedRate(timerTask, 0, 20000);
     }
 
     @SuppressLint("SetTextI18n")
@@ -216,15 +161,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent event) {
         Sensor sensor = event.sensor;
         if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            //set accelerometer value to textView
-            xValue.setText("X value:" + event.values[0]);
-            yValue.setText("Y value:" + event.values[1]);
-            zValue.setText("Z value:" + event.values[2]);
+
         } else if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            //set GYROSCOPE value to textView
-            gyXValue.setText("X value:" + event.values[0]);
-            gYValue.setText("Y value:" + event.values[1]);
-            gyZValue.setText("Z value:" + event.values[2]);
+
         } else if (sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             //set MAGNETIC_FIELD value to textView
             maXValue.setText("X value:" + event.values[0]);
