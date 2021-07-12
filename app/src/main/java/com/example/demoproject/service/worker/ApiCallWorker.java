@@ -1,4 +1,4 @@
-package com.example.demoproject.service;
+package com.example.demoproject.service.worker;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -28,6 +28,4 @@ public class ApiCallWorker extends Worker {
         dataHandle.callRestAPI(context);
         return Result.success();
     }
-
-
 }

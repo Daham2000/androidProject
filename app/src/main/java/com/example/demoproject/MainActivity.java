@@ -1,23 +1,15 @@
 package com.example.demoproject;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.work.Constraints;
-import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.demoproject.controller.DataHandle;
-import com.example.demoproject.model.SensorModel;
 import com.example.demoproject.sensor.AccelerometerSensorManage;
 import com.example.demoproject.sensor.GyroscopeSensorManage;
 import com.example.demoproject.sensor.HumiditySensorManage;
@@ -26,9 +18,8 @@ import com.example.demoproject.sensor.MagnetometerSensorManage;
 import com.example.demoproject.sensor.PressureSensorManage;
 import com.example.demoproject.sensor.ProximitySensorManage;
 import com.example.demoproject.sensor.TempSensorManage;
-import com.example.demoproject.service.ApiCallWorker;
-import com.example.demoproject.service.BackgroundService;
-import com.example.demoproject.service.WorkPeriodManage;
+import com.example.demoproject.service.worker.ApiCallWorker;
+import com.example.demoproject.service.worker.WorkPeriodManage;
 
 import java.util.concurrent.TimeUnit;
 
@@ -121,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
         WorkManager workManager = WorkManager.getInstance(this);
         workManager.enqueue(periodicSendDataWork);
+
     }
 
     private void SettingUpPeriodicWorkSendData() {

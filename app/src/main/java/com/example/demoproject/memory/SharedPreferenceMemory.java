@@ -31,14 +31,11 @@ public class SharedPreferenceMemory {
     }
 
     public void saveInShared(SensorModel sm) {
+        Log.e(TAG, "saveInShared: ");
         SharedPreferences sp = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        String sensorJsonData = sp.getString("SensorDetailKey", "");
-        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        SharedPreferences.Editor prefsEditor = sp.edit();
         String sensorObject = gson.toJson(sm);
-        sharedPreferences.edit().remove("SensorDetailKey");
-        if(sensorJsonData==null){
-            prefsEditor.putString("SensorDetailKey", sensorObject);
-            prefsEditor.commit();
-        }
+        prefsEditor.putString("SensorDetailKey", sensorObject);
+        prefsEditor.commit();
     }
 }

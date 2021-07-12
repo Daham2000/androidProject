@@ -14,16 +14,21 @@ import com.example.demoproject.model.SensorModel;
 
 public class AccelerometerSensorManage implements SensorEventListener {
 
-    private static final String TAG = "AccelerometerSensor";
+    private static final String TAG = "Accelerometer Sensor";
     private SensorManager sensorManager;
     private TextView yValueView;
     private TextView xValueView;
     private TextView zValueView;
-    private float xValue;
-    private float yValue;
-    private float zValue;
     private Context context;
     private Sensor accelerometer;
+    private static AccelerometerSensorManage accelerometerSensorManage;
+
+    public static AccelerometerSensorManage getAccelerometerSensorManage(SensorManager sensorManager, Context context) {
+        if (accelerometerSensorManage == null) {
+            accelerometerSensorManage = new AccelerometerSensorManage(sensorManager, context);
+        }
+        return accelerometerSensorManage;
+    }
 
     public AccelerometerSensorManage(SensorManager sensorManager, TextView xValue, TextView yValue, TextView zValue, Context context) {
         this.sensorManager = sensorManager;
@@ -65,17 +70,6 @@ public class AccelerometerSensorManage implements SensorEventListener {
             yValueView.setText("Y value:" + event.values[1]);
             zValueView.setText("Z value:" + event.values[2]);
         }
-        xValue = event.values[0];
-        yValue = event.values[1];
-        zValue = event.values[2];
-
-        DataHandle dataHandle = DataHandle.getDataHandle();
-        SensorModel sensorModel = SensorModel.getSensorModel();
-        sensorModel.setAccelerometerXValue(xValue);
-        sensorModel.setAccelerometerYValue(yValue);
-        sensorModel.setAccelerometerZValue(zValue);
-        dataHandle.saveInShared(context, sensorModel);
-        sensorManager.unregisterListener(this);
     }
 
     @Override

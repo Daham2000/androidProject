@@ -38,10 +38,11 @@ public class DataHandle {
         String sensorJsonData = sp.getString("SensorDetailKey", "");
         Gson gson=new Gson();
         SensorModel sensorModelData=gson.fromJson(sensorJsonData, SensorModel.class);
-        params.put("accelerometerX", String.valueOf(sensorModelData.getAccelerometerXValue()));
-        params.put("accelerometerY", String.valueOf(sensorModelData.getAccelerometerYValue()));
-        params.put("accelerometerZ", String.valueOf(sensorModelData.getAccelerometerZValue()));
-
+        if(sensorModelData!=null){
+            params.put("accelerometerX", String.valueOf(sensorModelData.getAccelerometerXValue()));
+            params.put("accelerometerY", String.valueOf(sensorModelData.getAccelerometerYValue()));
+            params.put("accelerometerZ", String.valueOf(sensorModelData.getAccelerometerZValue()));
+        }
         restApi.sendRequestPost(context, params);
         sp.edit().remove("SensorDetailKey");
     }
