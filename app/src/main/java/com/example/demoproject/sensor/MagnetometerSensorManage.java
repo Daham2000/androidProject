@@ -13,9 +13,9 @@ public class MagnetometerSensorManage implements SensorEventListener {
     private TextView yValueView;
     private TextView xValueView;
     private TextView zValueView;
-    private int xValue;
-    private int yValue;
-    private int zValue;
+    private double xValue;
+    private double yValue;
+    private double zValue;
 
     public MagnetometerSensorManage(SensorManager sensorManager, TextView yValue, TextView xValue, TextView zValue) {
         this.sensorManager = sensorManager;

@@ -11,7 +11,7 @@ public class LightSensorManage implements SensorEventListener {
 
     private SensorManager sensorManager;
     private TextView lightValueView;
-    private int lightValue;
+    private double lightValue;
 
     public LightSensorManage(SensorManager sensorManager, TextView lightValueView) {
         this.sensorManager = sensorManager;

@@ -1,29 +1,44 @@
 package com.example.demoproject.memory;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.demoproject.model.SensorModel;
+import com.google.gson.Gson;
 
 public class SharedPreferenceMemory {
 
     private static final String TAG = "SharedPreferenceMemory";
+    Gson gson = new Gson();
 
-    final SharedPreferences sharedPreferences;
+    private static SharedPreferenceMemory sharedPreferenceMemory;
+    private SharedPreferences sharedPreferences;
 
-    public SharedPreferenceMemory(SharedPreferences sharedPreferences) {
+    public static SharedPreferenceMemory getSharedPreferenceMemory() {
+        if (sharedPreferenceMemory == null) {
+            sharedPreferenceMemory = new SharedPreferenceMemory();
+        }
+        return sharedPreferenceMemory;
+    }
+
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
 
+    public SharedPreferences getSharedPreferences(String sensorDetail, int modePrivate) {
+        return sharedPreferences;
+    }
+
     public void saveInShared(SensorModel sm) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("accelerometerX", sm.getxValue());
-        editor.putString("accelerometerY", sm.getyValue());
-        editor.putString("accelerometerZ", sm.getzValue());
-        editor.putString("gyroscopeX", sm.getGyXValue());
-        editor.putString("gyroscopeY", sm.getgYValue());
-        editor.putString("gyroscopeZ", sm.getGyZValue());
-        editor.commit();
-        Log.d(TAG, "Saved in Shared");
+        SharedPreferences sp = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
+        String sensorJsonData = sp.getString("SensorDetailKey", "");
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        String sensorObject = gson.toJson(sm);
+        sharedPreferences.edit().remove("SensorDetailKey");
+        if(sensorJsonData==null){
+            prefsEditor.putString("SensorDetailKey", sensorObject);
+            prefsEditor.commit();
+        }
     }
 }
