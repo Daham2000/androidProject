@@ -1,67 +1,40 @@
 package com.example.demoproject.model;
 
 public class SensorModel {
-    private String xValue;
-    private String yValue;
-    private String zValue;
-    private String gyXValue;
-    private String gYValue;
-    private String gyZValue;
+    private float accelerometerXValue;
+    private float accelerometerYValue;
+    private float accelerometerZValue;
 
-    public SensorModel(String xValue, String yValue, String zValue, String gyXValue, String gYValue, String gyZValue) {
-        this.xValue = xValue;
-        this.yValue = yValue;
-        this.zValue = zValue;
-        this.gyXValue = gyXValue;
-        this.gYValue = gYValue;
-        this.gyZValue = gyZValue;
+    private static SensorModel sensorModel;
+
+    public static SensorModel getSensorModel() {
+        if(sensorModel==null){
+            sensorModel = new SensorModel();
+        }
+        return sensorModel;
     }
 
-    public void setxValue(String xValue) {
-        this.xValue = xValue;
+    public float getAccelerometerXValue() {
+        return accelerometerXValue;
     }
 
-    public void setyValue(String yValue) {
-        this.yValue = yValue;
+    public float getAccelerometerYValue() {
+        return accelerometerYValue;
     }
 
-    public void setzValue(String zValue) {
-        this.zValue = zValue;
+    public float getAccelerometerZValue() {
+        return accelerometerZValue;
     }
 
-    public void setGyXValue(String gyXValue) {
-        this.gyXValue = gyXValue;
+    public void setAccelerometerXValue(float accelerometerXValue) {
+        this.accelerometerXValue = accelerometerXValue;
     }
 
-    public void setgYValue(String gYValue) {
-        this.gYValue = gYValue;
+    public void setAccelerometerYValue(float accelerometerYValue) {
+        this.accelerometerYValue = accelerometerYValue;
     }
 
-    public void setGyZValue(String gyZValue) {
-        this.gyZValue = gyZValue;
-    }
-
-    public String getxValue() {
-        return xValue;
-    }
-
-    public String getyValue() {
-        return yValue;
-    }
-
-    public String getzValue() {
-        return zValue;
-    }
-
-    public String getGyXValue() {
-        return gyXValue;
-    }
-
-    public String getgYValue() {
-        return gYValue;
-    }
-
-    public String getGyZValue() {
-        return gyZValue;
+    public void setAccelerometerZValue(float accelerometerZValue) {
+        this.accelerometerZValue = accelerometerZValue;
     }
 }

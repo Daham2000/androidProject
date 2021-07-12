@@ -2,37 +2,55 @@ package com.example.demoproject.controller;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.SensorManager;
+import android.util.Log;
 
 import com.example.demoproject.api.RestApi;
+import com.example.demoproject.memory.SharedPreferenceMemory;
+import com.example.demoproject.model.SensorModel;
+import com.example.demoproject.sensor.AccelerometerSensorManage;
+import com.example.demoproject.sensor.GyroscopeSensorManage;
+import com.example.demoproject.sensor.HumiditySensorManage;
+import com.example.demoproject.sensor.LightSensorManage;
+import com.example.demoproject.sensor.MagnetometerSensorManage;
+import com.example.demoproject.sensor.PressureSensorManage;
+import com.example.demoproject.sensor.ProximitySensorManage;
+import com.example.demoproject.sensor.TempSensorManage;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 
 public class DataHandle {
+    private static final String TAG = "Data Controller";
+    private static RestApi restApi = new RestApi();
+    private HashMap<String, String> params = new HashMap<>();
     private static DataHandle dataHandle;
-    private static RestApi restApi;
 
-    public DataHandle() {
-    }
-
-    DataHandle getInstance() {
-        if (dataHandle == null) {
-            return dataHandle;
-        } else {
-            return dataHandle;
+    public static DataHandle getDataHandle() {
+        if(dataHandle==null){
+            dataHandle = new DataHandle();
         }
+        return dataHandle;
     }
 
-    void callRestAPI(Context context, HashMap<String, String> params) {
+    public void callRestAPI(Context context) {
         SharedPreferences sp = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        params.put("accelerometerX", sp.getString("accelerometerX", ""));
-        params.put("accelerometerY", sp.getString("accelerometerY", ""));
-        params.put("accelerometerZ", sp.getString("accelerometerZ", ""));
-        params.put("gyroscopeX", sp.getString("gyroscopeX", ""));
-        params.put("gyroscopeY", sp.getString("gyroscopeY", ""));
-        params.put("gyroscopeZ", sp.getString("gyroscopeZ", ""));
+        String sensorJsonData = sp.getString("SensorDetailKey", "");
+        Gson gson=new Gson();
+        SensorModel sensorModelData=gson.fromJson(sensorJsonData, SensorModel.class);
+        params.put("accelerometerX", String.valueOf(sensorModelData.getAccelerometerXValue()));
+        params.put("accelerometerY", String.valueOf(sensorModelData.getAccelerometerYValue()));
+        params.put("accelerometerZ", String.valueOf(sensorModelData.getAccelerometerZValue()));
+
         restApi.sendRequestPost(context, params);
+        sp.edit().remove("SensorDetailKey");
     }
 
-
+    public void saveInShared(Context context, SensorModel sensorModel){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
+        SharedPreferenceMemory memory = SharedPreferenceMemory.getSharedPreferenceMemory();
+        memory.setSharedPreferences(sharedPreferences);
+        memory.saveInShared(sensorModel);
+    }
 
 }
