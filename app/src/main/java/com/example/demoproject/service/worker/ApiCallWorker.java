@@ -10,6 +10,8 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.demoproject.controller.DataHandle;
+import com.example.demoproject.service.ApiService;
+import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
 
 public class ApiCallWorker extends Worker {
     private static final String TAG = "Api Call Worker";
@@ -24,8 +26,8 @@ public class ApiCallWorker extends Worker {
     @Override
     public Result doWork() {
         Log.d(TAG, "doWork: Work is done.");
-        DataHandle dataHandle = DataHandle.getDataHandle();
-        dataHandle.callRestAPI(context);
+        Intent intentBackground = new Intent(context, ApiService.class);
+        context.startService(intentBackground);
         return Result.success();
     }
 }

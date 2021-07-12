@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     private void SettingUpPeriodicWorkSaveData() {
         // Create Network constraint
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(WorkPeriodManage.class, 1, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(WorkPeriodManage.class, 5, TimeUnit.MINUTES)
                         .addTag("SaveData")
                         .build();
 
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void SettingUpPeriodicWorkSendData() {
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 5, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 10, TimeUnit.MINUTES)
                         .addTag("SendData")
                         .build();
 

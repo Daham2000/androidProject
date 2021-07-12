@@ -29,9 +29,9 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
     private static final String TAG = "Accelerometer Service";
     private SensorManager sensorManager;
     private Sensor sensor ;
-    private float xValue;
-    private float yValue;
-    private float zValue;
+    private static float xValue;
+    private static float yValue;
+    private static float zValue;
     private DataHandle dataHandle;
 
     @Nullable
