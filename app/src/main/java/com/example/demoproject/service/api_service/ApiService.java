@@ -1,4 +1,4 @@
-package com.example.demoproject.service;
+package com.example.demoproject.service.api_service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -20,5 +20,10 @@ public class ApiService extends Service {
         DataHandle dataHandle = DataHandle.getDataHandle();
         dataHandle.callRestAPI(getApplicationContext());
         return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

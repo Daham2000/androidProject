@@ -1,10 +1,12 @@
 package com.example.demoproject.memory;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.demoproject.model.SensorModel;
+import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
 import com.google.gson.Gson;
 
 public class SharedPreferenceMemory {
@@ -32,7 +34,6 @@ public class SharedPreferenceMemory {
 
     public void saveInShared(SensorModel sm) {
         SharedPreferences sp = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        sp.edit().remove("SensorDetailKey");
         SharedPreferences.Editor prefsEditor = sp.edit();
         String sensorObject = gson.toJson(sm);
         prefsEditor.putString("SensorDetailKey", sensorObject);

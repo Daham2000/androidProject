@@ -33,7 +33,7 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
     private static float yValue;
     private static float zValue;
     private DataHandle dataHandle;
-
+    private Intent intent;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -48,6 +48,7 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, sensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
+        this.intent = intent;
         return START_STICKY;
     }
 
@@ -78,6 +79,7 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
             sensorModel.setAccelerometerYValue(yValue);
             sensorModel.setAccelerometerZValue(zValue);
             dataHandle.saveInShared(getApplicationContext(), sensorModel);
+            stopService(intent);
             return null;
         }
     }
