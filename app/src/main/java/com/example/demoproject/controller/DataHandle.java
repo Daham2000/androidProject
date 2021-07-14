@@ -25,9 +25,10 @@ public class DataHandle {
     private static RestApi restApi = new RestApi();
     private HashMap<String, String> params = new HashMap<>();
     private static DataHandle dataHandle;
+    Gson gson = new Gson();
 
     public static DataHandle getDataHandle() {
-        if(dataHandle==null){
+        if (dataHandle == null) {
             dataHandle = new DataHandle();
         }
         return dataHandle;
@@ -35,23 +36,22 @@ public class DataHandle {
 
     public void callRestAPI(Context context) {
         SharedPreferences sp = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        String sensorJsonData = sp.getString("SensorDetailKey", "");
-        Gson gson=new Gson();
-        SensorModel sensorModelData=gson.fromJson(sensorJsonData, SensorModel.class);
-        if(sensorModelData!=null){
+        String sensorJsonData = sp.getString("AccelerometerKey", "");
+        SensorModel sensorModelData = gson.fromJson(sensorJsonData, SensorModel.class);
+        if (sensorModelData != null) {
             params.put("accelerometerX", String.valueOf(sensorModelData.getAccelerometerXValue()));
             params.put("accelerometerY", String.valueOf(sensorModelData.getAccelerometerYValue()));
             params.put("accelerometerZ", String.valueOf(sensorModelData.getAccelerometerZValue()));
         }
         restApi.sendRequestPost(context, params);
-        sp.edit().remove("SensorDetailKey");
+        sp.edit().remove("AccelerometerKey");
     }
 
-    public void saveInShared(Context context, SensorModel sensorModel){
+    public void saveInShared(Context context, SensorModel sensorModel, String key) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
         SharedPreferenceMemory memory = SharedPreferenceMemory.getSharedPreferenceMemory();
         memory.setSharedPreferences(sharedPreferences);
-        memory.saveInShared(sensorModel);
+        memory.saveInShared(sensorModel, key);
     }
 
 }

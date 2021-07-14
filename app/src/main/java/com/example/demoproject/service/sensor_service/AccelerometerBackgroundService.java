@@ -78,7 +78,7 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
             sensorModel.setAccelerometerXValue(xValue);
             sensorModel.setAccelerometerYValue(yValue);
             sensorModel.setAccelerometerZValue(zValue);
-            dataHandle.saveInShared(getApplicationContext(), sensorModel);
+            dataHandle.saveInShared(getApplicationContext(), sensorModel,"AccelerometerKey");
             stopService(intent);
             return null;
         }

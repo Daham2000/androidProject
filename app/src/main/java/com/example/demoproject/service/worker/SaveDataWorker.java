@@ -13,16 +13,16 @@ import com.example.demoproject.service.sensor_service.AccelerometerBackgroundSer
 
 import static android.content.Context.SENSOR_SERVICE;
 
-public class WorkPeriodManage extends Worker {
+public class SaveDataWorker extends Worker {
 
-    private static final String TAG = "WorkPeriodManage";
+    private static final String TAG = "Save Data Worker";
     private final Context context;
     final SensorManager sensorManager;
 
-    public WorkPeriodManage(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public SaveDataWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         this.context = context;
-        Log.d(TAG, "WorkPeriodManage: Call");
+        Log.d(TAG, "SaveDataWorker: Call");
         sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
     }
 
