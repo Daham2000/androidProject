@@ -12,19 +12,17 @@ import com.example.demoproject.service.api_service.ApiService;
 
 public class ApiCallWorker extends Worker {
     private static final String TAG = "Api Call Worker";
-    private final Context context;
 
     public ApiCallWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        this.context = context;
     }
 
     @NonNull
     @Override
     public Result doWork() {
         Log.d(TAG, "doWork: Work is done.");
-        Intent intentBackground = new Intent(context, ApiService.class);
-        context.startService(intentBackground);
+        Intent intentBackground = new Intent(getApplicationContext(), ApiService.class);
+        getApplicationContext().startService(intentBackground);
         return Result.success();
     }
 }

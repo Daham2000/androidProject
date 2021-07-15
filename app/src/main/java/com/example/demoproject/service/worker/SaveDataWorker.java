@@ -16,12 +16,10 @@ import static android.content.Context.SENSOR_SERVICE;
 public class SaveDataWorker extends Worker {
 
     private static final String TAG = "Save Data Worker";
-    private final Context context;
     final SensorManager sensorManager;
 
     public SaveDataWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        this.context = context;
         Log.d(TAG, "SaveDataWorker: Call");
         sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
     }
@@ -31,8 +29,8 @@ public class SaveDataWorker extends Worker {
     public Result doWork() {
         Log.d(TAG, "doWork: Work is done.");
         //get the sensor accelerometer
-        Intent intentBackground = new Intent(context, AccelerometerBackgroundService.class);
-        context.startService(intentBackground);
+        Intent intentBackground = new Intent(getApplicationContext(), AccelerometerBackgroundService.class);
+        getApplicationContext().startService(intentBackground);
         return Result.success();
     }
 

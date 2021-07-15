@@ -36,6 +36,7 @@ public class SharedPreferenceMemory {
         SharedPreferences sp = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = sp.edit();
         String sensorObject = gson.toJson(sm);
+        prefsEditor.remove(key);
         prefsEditor.putString(key, sensorObject);
         prefsEditor.commit();
     }

@@ -13,6 +13,8 @@
         android:required="true" />
     <uses-feature android:name="android.hardware.sensor.magnetometer" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -33,6 +35,10 @@
         <service
             android:name=".service.sensor_service.AccelerometerBackgroundService"
             android:exported="false"/>
+        <service
+            android:name=".service.job_service.MyJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            />
     </application>
 
 </manifest>

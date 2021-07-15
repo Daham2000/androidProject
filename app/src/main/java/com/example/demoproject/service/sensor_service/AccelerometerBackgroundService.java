@@ -56,7 +56,7 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
     public void onSensorChanged(SensorEvent event) {
         new SensorEventLoggerTask().execute(event);
         // stop the service
-        stopSelf();
+        stopService(intent);
     }
 
     @Override
@@ -64,6 +64,7 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
 
     }
 
+    //Save data in Shared and get data from sensor
     private class SensorEventLoggerTask extends
             AsyncTask<SensorEvent, Void, Void> {
         @Override
@@ -79,7 +80,6 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
             sensorModel.setAccelerometerYValue(yValue);
             sensorModel.setAccelerometerZValue(zValue);
             dataHandle.saveInShared(getApplicationContext(), sensorModel,"AccelerometerKey");
-            stopService(intent);
             return null;
         }
     }

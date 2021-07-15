@@ -7,6 +7,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONObject;
 
@@ -34,6 +36,10 @@ public class RestApi {
     }
 
     public void sendRequestPost(Context context, HashMap<String, String> params){
+
+         FirebaseDatabase db = FirebaseDatabase.getInstance();
+         DatabaseReference root = db.getReference().child("Users");
+
         Log.d(TAG, "sendRequestPost");
         RequestQueue requestQueue= Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -45,7 +51,13 @@ public class RestApi {
 
                 }
         );
-
         requestQueue.add(jsonObjectRequest);
+
+        HashMap<String, String> list = new HashMap<>();
+        list.put("Accelerometer X", params.get("accelerometerX"));
+        list.put("Accelerometer Y", params.get("accelerometerY"));
+        list.put("Accelerometer Z", params.get("accelerometerZ"));
+
+        root.push().setValue(list);
     }
 }
