@@ -1,17 +1,25 @@
 package com.example.demoproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Messenger;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,9 +31,13 @@ import com.example.demoproject.sensor.MagnetometerSensorManage;
 import com.example.demoproject.sensor.PressureSensorManage;
 import com.example.demoproject.sensor.ProximitySensorManage;
 import com.example.demoproject.sensor.TempSensorManage;
+import com.example.demoproject.service.ServiceAlarm;
+import com.example.demoproject.service.ShortTimeEntryReceiver;
 import com.example.demoproject.service.job_service.MyJobService;
+import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
 import com.example.demoproject.service.worker.ApiCallWorker;
 import com.example.demoproject.service.worker.SaveDataWorker;
+
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -86,18 +98,16 @@ public class MainActivity extends AppCompatActivity {
         ProximitySensorManage proximitySensorManage = new ProximitySensorManage(
                 sensorManager, proximityValue);
 
-        //Start worker for get Data from Sensor and save it on shared memory
-//        settingUpPeriodicWorkSaveData();
-        //Start worker for call API
-//        settingUpPeriodicWorkSendData();
-        //Start job schedule
+        //This field is used to perform alarm manager
+//        Intent intentBackground = new Intent(getApplication(), ServiceAlarm.class);
+//        startService(intentBackground);
     }
 
     //Start worker method for get Data from Sensor and save it on shared memory
     private void settingUpPeriodicWorkSaveData() {
         // Create Network constraint
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(SaveDataWorker.class, 10, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(SaveDataWorker.class, 1, TimeUnit.MINUTES)
                         .addTag("SaveData")
                         .build();
 
@@ -105,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
         workManager.enqueue(periodicSendDataWork);
     }
 
-    //Start worker method for call API/ send data to database
+    //Start worker method for call API send data to database
     private void settingUpPeriodicWorkSendData() {
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 11, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 2, TimeUnit.MINUTES)
                         .addTag("SendData")
                         .build();
 
@@ -118,21 +128,27 @@ public class MainActivity extends AppCompatActivity {
 
     public void jobSchedule(View view) {
         ComponentName componentName = new ComponentName(this, MyJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(123,componentName);
-        builder.setPeriodic(900000);
+        JobInfo.Builder builder = new JobInfo.Builder(123, componentName);
+        builder.setPeriodic(15 * 60000);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
         builder.setPersisted(true);
         jobInfo = builder.build();
 
         scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         scheduler.schedule(jobInfo);
-        Toast.makeText(getApplicationContext(),"Job Scheduled",Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Job Scheduled", Toast.LENGTH_LONG).show();
     }
 
     public void jobCancel(View view) {
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         scheduler.cancel(123);
-        Toast.makeText(getApplicationContext(),"Job Canceled",Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Job Canceled", Toast.LENGTH_LONG).show();
         Log.d(TAG, "job Canceled");
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        super.onDestroy();
     }
 }

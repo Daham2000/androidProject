@@ -25,6 +25,7 @@ public class MyJobService extends JobService {
         return true;
     }
 
+
     private void doBackgroundWork(JobParameters params) {
 
         exacter = new MyJobExacter(){
@@ -34,7 +35,6 @@ public class MyJobService extends JobService {
                 Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
                 Intent intentBackground = new Intent(getApplicationContext(), AccelerometerBackgroundService.class);
                 getApplicationContext().startService(intentBackground);
-
                 Intent intentBackgroundApi = new Intent(getApplicationContext(), ApiService.class);
                 getApplicationContext().startService(intentBackgroundApi);
             }

@@ -10,6 +10,7 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.work.Constraints;
@@ -43,6 +44,7 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: Started...");
+        Toast.makeText(getApplicationContext(),"Started Sensor Service",Toast.LENGTH_LONG).show();
         dataHandle = DataHandle.getDataHandle();
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);

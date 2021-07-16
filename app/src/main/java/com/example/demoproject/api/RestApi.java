@@ -2,6 +2,7 @@ package com.example.demoproject.api;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,7 +39,7 @@ public class RestApi {
     public void sendRequestPost(Context context, HashMap<String, String> params){
 
          FirebaseDatabase db = FirebaseDatabase.getInstance();
-         DatabaseReference root = db.getReference().child("Users");
+         DatabaseReference root = db.getReference().child("Sensor Data");
 
         Log.d(TAG, "sendRequestPost");
         RequestQueue requestQueue= Volley.newRequestQueue(context);
@@ -59,5 +60,7 @@ public class RestApi {
         list.put("Accelerometer Z", params.get("accelerometerZ"));
 
         root.push().setValue(list);
+
+        Toast.makeText(context,"Send Data to Database",Toast.LENGTH_LONG).show();
     }
 }
