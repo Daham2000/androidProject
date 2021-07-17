@@ -34,6 +34,7 @@ import com.example.demoproject.sensor.TempSensorManage;
 import com.example.demoproject.service.ServiceAlarm;
 import com.example.demoproject.service.ShortTimeEntryReceiver;
 import com.example.demoproject.service.job_service.MyJobService;
+import com.example.demoproject.service.job_service.SaveDataJobService;
 import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
 import com.example.demoproject.service.worker.ApiCallWorker;
 import com.example.demoproject.service.worker.SaveDataWorker;
@@ -101,47 +102,70 @@ public class MainActivity extends AppCompatActivity {
         //This field is used to perform alarm manager
 //        Intent intentBackground = new Intent(getApplication(), ServiceAlarm.class);
 //        startService(intentBackground);
+//        sendDataJobSchedule();
+
+        settingUpPeriodicWorkSaveData();
+        settingUpPeriodicWorkSendData();
     }
 
     //Start worker method for get Data from Sensor and save it on shared memory
     private void settingUpPeriodicWorkSaveData() {
         // Create Network constraint
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(SaveDataWorker.class, 1, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(SaveDataWorker.class, 15, TimeUnit.MINUTES)
                         .addTag("SaveData")
                         .build();
-
         WorkManager workManager = WorkManager.getInstance(this);
+        workManager.cancelAllWorkByTag("SaveData");
         workManager.enqueue(periodicSendDataWork);
     }
 
     //Start worker method for call API send data to database
     private void settingUpPeriodicWorkSendData() {
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 2, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 20, TimeUnit.MINUTES)
                         .addTag("SendData")
                         .build();
 
         WorkManager workManager = WorkManager.getInstance(this);
+        workManager.cancelAllWorkByTag("SendData");
         workManager.enqueue(periodicSendDataWork);
     }
 
+    //This method for start Job service (Click event method)
     public void jobSchedule(View view) {
-        ComponentName componentName = new ComponentName(this, MyJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(123, componentName);
+//        ComponentName componentName = new ComponentName(this, MyJobService.class);
+//        JobInfo.Builder builder = new JobInfo.Builder(123, componentName);
+//        builder.setPeriodic(20 * 60000);
+//        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+//        builder.setPersisted(true);
+//        jobInfo = builder.build();
+//
+//        scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+//        scheduler.schedule(jobInfo);
+//        Log.d(TAG, "Send data Job Scheduled");
+//        Toast.makeText(getApplicationContext(), "Send data Job Scheduled", Toast.LENGTH_LONG).show();
+    }
+
+    public void sendDataJobSchedule() {
+        ComponentName componentName = new ComponentName(this, SaveDataJobService.class);
+        JobInfo.Builder builder = new JobInfo.Builder(122, componentName);
         builder.setPeriodic(15 * 60000);
-        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
         builder.setPersisted(true);
         jobInfo = builder.build();
 
         scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         scheduler.schedule(jobInfo);
-        Toast.makeText(getApplicationContext(), "Job Scheduled", Toast.LENGTH_LONG).show();
+        Log.d(TAG, "Save data Job Scheduled");
+        Toast.makeText(getApplicationContext(), "Save data Job Scheduled", Toast.LENGTH_LONG).show();
     }
 
+    //This method for stop Job service (Click event method)
     public void jobCancel(View view) {
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         scheduler.cancel(123);
+        scheduler.cancel(122);
         Toast.makeText(getApplicationContext(), "Job Canceled", Toast.LENGTH_LONG).show();
         Log.d(TAG, "job Canceled");
     }

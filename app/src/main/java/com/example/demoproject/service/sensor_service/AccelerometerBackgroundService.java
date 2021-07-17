@@ -2,6 +2,7 @@ package com.example.demoproject.service.sensor_service;
 
 import android.app.IntentService;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -25,40 +26,45 @@ import com.example.demoproject.sensor.AccelerometerSensorManage;
 
 import java.util.concurrent.TimeUnit;
 
-public class AccelerometerBackgroundService extends Service implements SensorEventListener {
+import static android.content.Context.SENSOR_SERVICE;
+import static androidx.core.content.ContextCompat.getSystemService;
+
+public class AccelerometerBackgroundService implements SensorEventListener {
 
     private static final String TAG = "Accelerometer Service";
+    private static AccelerometerBackgroundService accelerometerBackground;
     private SensorManager sensorManager;
     private Sensor sensor ;
     private static float xValue;
     private static float yValue;
     private static float zValue;
     private DataHandle dataHandle;
-    private Intent intent;
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    private Context context;
+
+    public AccelerometerBackgroundService(Context context){
+        this.context = context;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand: Started...");
-        Toast.makeText(getApplicationContext(),"Started Sensor Service",Toast.LENGTH_LONG).show();
+    public static AccelerometerBackgroundService getAccelerometerBackground(Context context) {
+        if(accelerometerBackground==null){
+            accelerometerBackground = new AccelerometerBackgroundService(context);
+        }
+        return accelerometerBackground;
+    }
+
+    public void StartListener(){
+        Log.e(TAG, "StartListener started");
         dataHandle = DataHandle.getDataHandle();
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, sensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
-        this.intent = intent;
-        return START_STICKY;
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         new SensorEventLoggerTask().execute(event);
-        // stop the service
-        stopService(intent);
+        sensorManager.unregisterListener(this);
     }
 
     @Override
@@ -81,7 +87,8 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
             sensorModel.setAccelerometerXValue(xValue);
             sensorModel.setAccelerometerYValue(yValue);
             sensorModel.setAccelerometerZValue(zValue);
-            dataHandle.saveInShared(getApplicationContext(), sensorModel,"AccelerometerKey");
+            dataHandle.saveInShared(context, sensorModel,"AccelerometerKey");
+            Log.e(TAG, "Save Data in Shared");
             return null;
         }
     }

@@ -1,6 +1,7 @@
 package com.example.demoproject.api;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,6 +15,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.logging.Handler;
+
 public class RestApi {
 
     String URL = "https://jsonplaceholder.typicode.com/posts/";
@@ -38,8 +41,8 @@ public class RestApi {
 
     public void sendRequestPost(Context context, HashMap<String, String> params){
 
-         FirebaseDatabase db = FirebaseDatabase.getInstance();
-         DatabaseReference root = db.getReference().child("Sensor Data");
+//         FirebaseDatabase db = FirebaseDatabase.getInstance();
+//         DatabaseReference root = db.getReference().child("Sensor Data");
 
         Log.d(TAG, "sendRequestPost");
         RequestQueue requestQueue= Volley.newRequestQueue(context);
@@ -54,13 +57,11 @@ public class RestApi {
         );
         requestQueue.add(jsonObjectRequest);
 
-        HashMap<String, String> list = new HashMap<>();
-        list.put("Accelerometer X", params.get("accelerometerX"));
-        list.put("Accelerometer Y", params.get("accelerometerY"));
-        list.put("Accelerometer Z", params.get("accelerometerZ"));
+//        HashMap<String, String> list = new HashMap<>();
+//        list.put("Accelerometer X", params.get("accelerometerX"));
+//        list.put("Accelerometer Y", params.get("accelerometerY"));
+//        list.put("Accelerometer Z", params.get("accelerometerZ"));
 
-        root.push().setValue(list);
-
-        Toast.makeText(context,"Send Data to Database",Toast.LENGTH_LONG).show();
+//        root.push().setValue(list);
     }
 }

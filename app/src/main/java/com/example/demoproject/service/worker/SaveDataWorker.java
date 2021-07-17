@@ -3,7 +3,10 @@ package com.example.demoproject.service.worker;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -27,11 +30,19 @@ public class SaveDataWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d(TAG, "doWork: Work is done.");
         //get the sensor accelerometer
-        Intent intentBackground = new Intent(getApplicationContext(), AccelerometerBackgroundService.class);
-        getApplicationContext().startService(intentBackground);
-        return Result.success();
+        Log.e(TAG, "Work do BackgroundWork");
+        AccelerometerBackgroundService accelerometerBackgroundService =
+                AccelerometerBackgroundService.getAccelerometerBackground(getApplicationContext());
+        accelerometerBackgroundService.StartListener();
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Run your task here
+                Toast.makeText(getApplicationContext(), "Worker Save data cache", Toast.LENGTH_SHORT).show();
+            }
+        }, 1000 );        return Result.success();
     }
 
 }

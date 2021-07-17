@@ -39,5 +39,6 @@ public class SharedPreferenceMemory {
         prefsEditor.remove(key);
         prefsEditor.putString(key, sensorObject);
         prefsEditor.commit();
+        Log.e(TAG, "Data saved in shared");
     }
 }
