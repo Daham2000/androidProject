@@ -3,6 +3,9 @@ package com.example.demoproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -46,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Main Activity";
     private JobInfo jobInfo;
     private JobScheduler scheduler;
+    private String workTag = "SaveData";
+    private String workTagTwo = "SendData";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,23 +118,27 @@ public class MainActivity extends AppCompatActivity {
         // Create Network constraint
         PeriodicWorkRequest periodicSendDataWork =
                 new PeriodicWorkRequest.Builder(SaveDataWorker.class, 15, TimeUnit.MINUTES)
-                        .addTag("SaveData")
+                        .addTag(workTag)
                         .build();
         WorkManager workManager = WorkManager.getInstance(this);
-        workManager.cancelAllWorkByTag("SaveData");
-        workManager.enqueue(periodicSendDataWork);
+        workManager.enqueueUniquePeriodicWork(workTag, ExistingPeriodicWorkPolicy.KEEP,periodicSendDataWork);
     }
 
     //Start worker method for call API send data to database
     private void settingUpPeriodicWorkSendData() {
+        Constraints constraints = new Constraints.Builder()
+                // The Worker needs Network connectivity
+                .setRequiredNetworkType(NetworkType.UNMETERED)
+                .build();
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 20, TimeUnit.MINUTES)
-                        .addTag("SendData")
+                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 16, TimeUnit.MINUTES)
+                        .addTag(workTagTwo)
+                        .setInitialDelay(1,TimeUnit.MINUTES)
+                        .setConstraints(constraints)
                         .build();
 
         WorkManager workManager = WorkManager.getInstance(this);
-        workManager.cancelAllWorkByTag("SendData");
-        workManager.enqueue(periodicSendDataWork);
+        workManager.enqueueUniquePeriodicWork(workTagTwo,ExistingPeriodicWorkPolicy.KEEP,periodicSendDataWork);
     }
 
     //This method for start Job service (Click event method)
@@ -173,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
+        settingUpPeriodicWorkSaveData();
+        settingUpPeriodicWorkSendData();
         super.onDestroy();
     }
 }

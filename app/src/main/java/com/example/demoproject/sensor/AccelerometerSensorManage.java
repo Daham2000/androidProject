@@ -66,9 +66,9 @@ public class AccelerometerSensorManage implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         if (yValueView != null) {
             //set accelerometer value to textView
-            xValueView.setText("X value:" + event.values[0]);
-            yValueView.setText("Y value:" + event.values[1]);
-            zValueView.setText("Z value:" + event.values[2]);
+            xValueView.setText("X value: " + event.values[0]);
+            yValueView.setText("Y value: " + event.values[1]);
+            zValueView.setText("Z value: " + event.values[2]);
         }
     }
 

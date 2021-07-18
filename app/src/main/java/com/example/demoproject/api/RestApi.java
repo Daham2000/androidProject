@@ -41,8 +41,8 @@ public class RestApi {
 
     public void sendRequestPost(Context context, HashMap<String, String> params){
 
-//         FirebaseDatabase db = FirebaseDatabase.getInstance();
-//         DatabaseReference root = db.getReference().child("Sensor Data");
+         FirebaseDatabase db = FirebaseDatabase.getInstance();
+         DatabaseReference root = db.getReference().child("Sensor Data");
 
         Log.d(TAG, "sendRequestPost");
         RequestQueue requestQueue= Volley.newRequestQueue(context);
@@ -57,11 +57,11 @@ public class RestApi {
         );
         requestQueue.add(jsonObjectRequest);
 
-//        HashMap<String, String> list = new HashMap<>();
-//        list.put("Accelerometer X", params.get("accelerometerX"));
-//        list.put("Accelerometer Y", params.get("accelerometerY"));
-//        list.put("Accelerometer Z", params.get("accelerometerZ"));
+        HashMap<String, String> list = new HashMap<>();
+        list.put("Accelerometer X", params.get("accelerometerX"));
+        list.put("Accelerometer Y", params.get("accelerometerY"));
+        list.put("Accelerometer Z", params.get("accelerometerZ"));
 
-//        root.push().setValue(list);
+        root.push().setValue(list);
     }
 }

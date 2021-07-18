@@ -8,17 +8,25 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.demoproject.controller.DataHandle;
 import com.example.demoproject.service.api_service.ApiService;
 
+import java.util.concurrent.TimeUnit;
+
 public class ApiCallWorker extends Worker {
     private static final String TAG = "Api Call Worker";
     public ApiCallWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
+    private String workTagTwo = "SendData";
 
     @NonNull
     @Override
@@ -34,9 +42,32 @@ public class ApiCallWorker extends Worker {
                 // Run your task here
                 Toast.makeText(getApplicationContext(), "Worker Send data", Toast.LENGTH_SHORT).show();
             }
-        }, 1000 );
+        }, 2000 );
 
 
         return Result.success();
+    }
+
+    @Override
+    public void onStopped() {
+        Log.e(TAG, "Worker Stopped");
+        settingUpPeriodicWorkSendData();
+        super.onStopped();
+    }
+
+    //Start worker method for call API send data to database
+    private void settingUpPeriodicWorkSendData() {
+        Constraints constraints = new Constraints.Builder()
+                // The Worker needs Network connectivity
+                .setRequiredNetworkType(NetworkType.UNMETERED)
+                .build();
+        PeriodicWorkRequest periodicSendDataWork =
+                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 16, TimeUnit.MINUTES)
+                        .addTag(workTagTwo)
+                        .setConstraints(constraints)
+                        .build();
+
+        WorkManager workManager = WorkManager.getInstance(getApplicationContext());
+        workManager.enqueueUniquePeriodicWork(workTagTwo, ExistingPeriodicWorkPolicy.KEEP,periodicSendDataWork);
     }
 }
