@@ -50,10 +50,12 @@ public class SaveDataWorker extends Worker {
     public Result doWork() {
         //get the sensor accelerometer
         Log.e(TAG, "Work do BackgroundWork");
+        Intent serviceIntent = new Intent(getApplicationContext(), AccelerometerBackgroundService.class);
 
-        AccelerometerBackgroundService accelerometerBackgroundService =
-                AccelerometerBackgroundService.getAccelerometerBackground(getApplicationContext());
-        accelerometerBackgroundService.StartListener();
+        ContextCompat.startForegroundService(getApplicationContext(),serviceIntent);
+//        AccelerometerBackgroundService accelerometerBackgroundService =
+//                AccelerometerBackgroundService.getAccelerometerBackground(getApplicationContext());
+//        accelerometerBackgroundService.StartListener();
 
         handler.postDelayed(new Runnable() {
             @Override

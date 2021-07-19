@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.example.demoproject.api.RestApi;
 import com.example.demoproject.memory.SharedPreferenceMemory;
+import com.example.demoproject.model.SensorDataListModel;
 import com.example.demoproject.model.SensorModel;
 import com.example.demoproject.sensor.AccelerometerSensorManage;
 import com.example.demoproject.sensor.GyroscopeSensorManage;
@@ -37,15 +38,18 @@ public class DataHandle {
 
     public void callRestAPI(Context context) {
         SharedPreferences sp = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        String sensorJsonData = sp.getString("AccelerometerKey", "");
-        SensorModel sensorModelData = gson.fromJson(sensorJsonData, SensorModel.class);
+        String sensorJsonData = sp.getString("SensorKey", "");
+        SensorDataListModel sensorModelData = gson.fromJson(sensorJsonData, SensorDataListModel.class);
         if (sensorModelData != null) {
-            params.put("accelerometerX", String.valueOf(sensorModelData.getAccelerometerXValue()));
-            params.put("accelerometerY", String.valueOf(sensorModelData.getAccelerometerYValue()));
-            params.put("accelerometerZ", String.valueOf(sensorModelData.getAccelerometerZValue()));
+            for(SensorModel sensorModel:sensorModelData.getSensorModelList()){
+                params.put("accelerometerX", String.valueOf(sensorModel.getAccelerometerXValue()));
+                params.put("accelerometerY", String.valueOf(sensorModel.getAccelerometerYValue()));
+                params.put("accelerometerZ", String.valueOf(sensorModel.getAccelerometerZValue()));
+                params.put("proximity", String.valueOf(sensorModel.getProximity()));
+                restApi.sendRequestPost(context, params);
+            }
         }
-        restApi.sendRequestPost(context, params);
-        sp.edit().remove("AccelerometerKey");
+        sp.edit().remove("SensorKey");
     }
 
     public void saveInShared(Context context, SensorModel sensorModel, String key) {

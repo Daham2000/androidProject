@@ -107,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
         settingUpPeriodicWorkSaveData();
         settingUpPeriodicWorkSendData();
-        Intent sensorService = new Intent(this, AccelerometerBackgroundService.class);
-        startService(sensorService);
     }
 
     //Start worker method for get Data from Sensor and save it on shared memory
@@ -128,8 +126,9 @@ public class MainActivity extends AppCompatActivity {
                 .setRequiredNetworkType(NetworkType.UNMETERED)
                 .build();
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 16, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 30, TimeUnit.MINUTES)
                         .addTag(workTagTwo)
+                        .setInitialDelay(5,TimeUnit.SECONDS)
                         .setConstraints(constraints)
                         .build();
 
