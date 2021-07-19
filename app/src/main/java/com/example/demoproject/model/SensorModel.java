@@ -4,6 +4,7 @@ public class SensorModel {
     private float accelerometerXValue;
     private float accelerometerYValue;
     private float accelerometerZValue;
+    private float proximity;
 
     private static SensorModel sensorModel;
 
@@ -36,5 +37,13 @@ public class SensorModel {
 
     public void setAccelerometerZValue(float accelerometerZValue) {
         this.accelerometerZValue = accelerometerZValue;
+    }
+
+    public float getProximity() {
+        return proximity;
+    }
+
+    public void setProximity(float proximity) {
+        this.proximity = proximity;
     }
 }

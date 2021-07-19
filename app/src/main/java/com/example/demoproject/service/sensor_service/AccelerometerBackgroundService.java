@@ -9,7 +9,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -29,21 +31,26 @@ import java.util.concurrent.TimeUnit;
 import static android.content.Context.SENSOR_SERVICE;
 import static androidx.core.content.ContextCompat.getSystemService;
 
-public class AccelerometerBackgroundService implements SensorEventListener {
+public class AccelerometerBackgroundService  extends Service implements SensorEventListener {
 
     private static final String TAG = "Accelerometer Service";
     private static AccelerometerBackgroundService accelerometerBackground;
     private SensorManager sensorManager;
     private Sensor sensor ;
+    private Sensor proximity ;
     private static float xValue;
     private static float yValue;
     private static float zValue;
+    private static float proximityValue;
     private DataHandle dataHandle;
     private Context context;
+    Handler handler = new Handler(Looper.getMainLooper());
 
     public AccelerometerBackgroundService(Context context){
         this.context = context;
     }
+
+    public AccelerometerBackgroundService(){};
 
     public static AccelerometerBackgroundService getAccelerometerBackground(Context context) {
         if(accelerometerBackground==null){
@@ -57,6 +64,9 @@ public class AccelerometerBackgroundService implements SensorEventListener {
         dataHandle = DataHandle.getDataHandle();
         sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        sensorManager.registerListener(this, proximity,
+                SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, sensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -65,11 +75,27 @@ public class AccelerometerBackgroundService implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         new SensorEventLoggerTask().execute(event);
         sensorManager.unregisterListener(this);
+        // stop the service
+        stopSelf();
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        return START_STICKY;
     }
 
     //Save data in Shared and get data from sensor
@@ -78,17 +104,25 @@ public class AccelerometerBackgroundService implements SensorEventListener {
         @Override
         protected Void doInBackground(SensorEvent... events) {
             SensorEvent event = events[0];
-            xValue = event.values[0];
-            yValue = event.values[1];
-            zValue = event.values[2];
-
+            if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+                xValue = event.values[0];
+                yValue = event.values[1];
+                zValue = event.values[2];
+            }else if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+                proximityValue = event.values[0];
+            }
             DataHandle dataHandle = DataHandle.getDataHandle();
             SensorModel sensorModel = SensorModel.getSensorModel();
             sensorModel.setAccelerometerXValue(xValue);
             sensorModel.setAccelerometerYValue(yValue);
             sensorModel.setAccelerometerZValue(zValue);
+            sensorModel.setProximity(proximityValue);
             dataHandle.saveInShared(context, sensorModel,"AccelerometerKey");
             Log.e(TAG, "Save Data in Shared");
+            handler.postDelayed(() -> {
+                // Run your task here
+                Toast.makeText(context, "Worker Save data cache", Toast.LENGTH_SHORT).show();
+            }, 2000 );
             return null;
         }
     }

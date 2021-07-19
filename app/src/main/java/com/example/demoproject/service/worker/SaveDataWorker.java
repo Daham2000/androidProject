@@ -1,5 +1,6 @@
 package com.example.demoproject.service.worker;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -22,10 +24,12 @@ import androidx.work.WorkerParameters;
 
 import com.example.demoproject.MainActivity;
 import com.example.demoproject.R;
+import com.example.demoproject.service.ServiceAlarm;
 import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
 
 import java.util.concurrent.TimeUnit;
 
+import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 public class SaveDataWorker extends Worker {
@@ -39,16 +43,18 @@ public class SaveDataWorker extends Worker {
         Log.d(TAG, "SaveDataWorker: Call");
         sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
     }
+    Handler handler = new Handler(Looper.getMainLooper());
 
     @NonNull
     @Override
     public Result doWork() {
         //get the sensor accelerometer
         Log.e(TAG, "Work do BackgroundWork");
+
         AccelerometerBackgroundService accelerometerBackgroundService =
                 AccelerometerBackgroundService.getAccelerometerBackground(getApplicationContext());
         accelerometerBackgroundService.StartListener();
-        Handler handler = new Handler(Looper.getMainLooper());
+
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

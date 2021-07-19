@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.demoproject.MainActivity;
 import com.example.demoproject.R;
+import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
 
 import java.util.Timer;
 
@@ -35,19 +36,6 @@ public class ServiceAlarm extends Service {
     public class BackgroundServiceBinder extends Binder {
         public ServiceAlarm getService() {
             return ServiceAlarm.this;
-        }
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Example Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
         }
     }
 
@@ -78,25 +66,11 @@ public class ServiceAlarm extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("Service", "Service Started...");
-        createNotificationChannel();
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntentT = PendingIntent.getActivity(this,
-                0, notificationIntent, 0);
-
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Example Service")
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentIntent(pendingIntentT)
-                .build();
-
-
         AlarmManager alarmMgr = (AlarmManager)getSystemService(ALARM_SERVICE);
-        Intent intentTwo = new Intent(this, ShortTimeEntryReceiver.class);
+        Intent intentTwo = new Intent(this, AccelerometerBackgroundService.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,  intentTwo, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),10000, pendingIntent);
-
-        startForeground(1, notification);
-
+        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),pendingIntent);
         return START_STICKY;
     }
 }

@@ -15,11 +15,9 @@ public class ShortTimeEntryReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         try {
             // Your activity name
-            Intent intentBackground = new Intent(context, AccelerometerBackgroundService.class);
-            context.startService(intentBackground);
+//            Intent intentBackground = new Intent(context, AccelerometerBackgroundService.class);
+//            context.startService(intentBackground);
 
-            Intent intentBackgroundTwo = new Intent(context, ApiService.class);
-            context.startService(intentBackgroundTwo);
         } catch (Exception e) {
             e.printStackTrace();
 

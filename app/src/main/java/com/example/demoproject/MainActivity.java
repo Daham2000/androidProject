@@ -15,6 +15,7 @@ import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.SensorManager;
@@ -104,18 +105,14 @@ public class MainActivity extends AppCompatActivity {
         ProximitySensorManage proximitySensorManage = new ProximitySensorManage(
                 sensorManager, proximityValue);
 
-        //This field is used to perform alarm manager
-//        Intent intentBackground = new Intent(getApplication(), ServiceAlarm.class);
-//        startService(intentBackground);
-//        sendDataJobSchedule();
-
         settingUpPeriodicWorkSaveData();
         settingUpPeriodicWorkSendData();
+        Intent sensorService = new Intent(this, AccelerometerBackgroundService.class);
+        startService(sensorService);
     }
 
     //Start worker method for get Data from Sensor and save it on shared memory
     private void settingUpPeriodicWorkSaveData() {
-        // Create Network constraint
         PeriodicWorkRequest periodicSendDataWork =
                 new PeriodicWorkRequest.Builder(SaveDataWorker.class, 15, TimeUnit.MINUTES)
                         .addTag(workTag)
@@ -133,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
         PeriodicWorkRequest periodicSendDataWork =
                 new PeriodicWorkRequest.Builder(ApiCallWorker.class, 16, TimeUnit.MINUTES)
                         .addTag(workTagTwo)
-                        .setInitialDelay(1,TimeUnit.MINUTES)
                         .setConstraints(constraints)
                         .build();
 
@@ -157,26 +153,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendDataJobSchedule() {
-        ComponentName componentName = new ComponentName(this, SaveDataJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(122, componentName);
-        builder.setPeriodic(15 * 60000);
-        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
-        builder.setPersisted(true);
-        jobInfo = builder.build();
-
-        scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        scheduler.schedule(jobInfo);
-        Log.d(TAG, "Save data Job Scheduled");
-        Toast.makeText(getApplicationContext(), "Save data Job Scheduled", Toast.LENGTH_LONG).show();
+//        ComponentName componentName = new ComponentName(this, SaveDataJobService.class);
+//        JobInfo.Builder builder = new JobInfo.Builder(122, componentName);
+//        builder.setPeriodic(15 * 60000);
+//        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
+//        builder.setPersisted(true);
+//        jobInfo = builder.build();
+//
+//        scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+//        scheduler.schedule(jobInfo);
+//        Log.d(TAG, "Save data Job Scheduled");
+//        Toast.makeText(getApplicationContext(), "Save data Job Scheduled", Toast.LENGTH_LONG).show();
     }
 
     //This method for stop Job service (Click event method)
     public void jobCancel(View view) {
-        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        scheduler.cancel(123);
-        scheduler.cancel(122);
-        Toast.makeText(getApplicationContext(), "Job Canceled", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "job Canceled");
+//        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+//        scheduler.cancel(123);
+//        scheduler.cancel(122);
+//        Toast.makeText(getApplicationContext(), "Job Canceled", Toast.LENGTH_LONG).show();
+//        Log.d(TAG, "job Canceled");
     }
 
     @Override
