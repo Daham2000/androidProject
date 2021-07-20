@@ -54,5 +54,8 @@ public class SharedPreferenceMemory {
         prefsEditor.putString(key, sensorObject);
         prefsEditor.apply();
         Log.e(TAG, "Data saved in shared");
+        if(sensorDataListModel!=null){
+            Log.e(TAG, "saveInShared: " + sensorDataListModel.getSensorModelList().size());
+        }
     }
 }

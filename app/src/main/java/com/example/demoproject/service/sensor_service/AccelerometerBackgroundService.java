@@ -83,7 +83,7 @@ public class AccelerometerBackgroundService  extends Service implements SensorEv
         new SensorEventLoggerTask().execute(event);
         if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
             sensorManager.unregisterListener(this,sensor);
-        }else if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+        }else if(event.sensor.getType()==Sensor.TYPE_PROXIMITY){
             sensorManager.unregisterListener(this,proximity);
         }
         // stop the service
@@ -149,11 +149,11 @@ public class AccelerometerBackgroundService  extends Service implements SensorEv
             sensorModel.setProximity(proximityValue);
             dataHandle.saveInShared(getApplicationContext(), sensorModel,"SensorKey");
             Log.e(TAG, "Save Data in Shared");
-            Log.d(TAG, "Value:- "+xValue);
+            Log.d(TAG, "Value:- "+yValue);
             handler.postDelayed(() -> {
                 // Run your task here
                 Toast.makeText(getApplicationContext(), "Worker Save data cache", Toast.LENGTH_SHORT).show();
-            }, 2000 );
+            }, 3000 );
 
             return null;
         }

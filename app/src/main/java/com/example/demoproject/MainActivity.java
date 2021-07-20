@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         PeriodicWorkRequest periodicSendDataWork =
                 new PeriodicWorkRequest.Builder(ApiCallWorker.class, 30, TimeUnit.MINUTES)
                         .addTag(workTagTwo)
-                        .setInitialDelay(5,TimeUnit.SECONDS)
+                        .setInitialDelay(10,TimeUnit.SECONDS)
                         .setConstraints(constraints)
                         .build();
 

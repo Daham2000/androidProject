@@ -47,6 +47,7 @@ public class DataHandle {
                 params.put("accelerometerZ", String.valueOf(sensorModel.getAccelerometerZValue()));
                 params.put("proximity", String.valueOf(sensorModel.getProximity()));
                 restApi.sendRequestPost(context, params);
+                params.clear();
             }
         }
         sp.edit().remove("SensorKey");

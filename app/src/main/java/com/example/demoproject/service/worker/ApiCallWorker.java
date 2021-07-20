@@ -34,17 +34,6 @@ public class ApiCallWorker extends Worker {
         Log.d(TAG, "doWork: Work is done.");
         DataHandle dataHandle = DataHandle.getDataHandle();
         dataHandle.callRestAPI(getApplicationContext());
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Run your task here
-                Toast.makeText(getApplicationContext(), "Worker Send data", Toast.LENGTH_SHORT).show();
-            }
-        }, 2000 );
-
-
         return Result.success();
     }
 
