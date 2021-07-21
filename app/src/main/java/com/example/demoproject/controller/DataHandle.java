@@ -39,18 +39,22 @@ public class DataHandle {
     public void callRestAPI(Context context) {
         SharedPreferences sp = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
         String sensorJsonData = sp.getString("SensorKey", "");
+        SharedPreferences.Editor prefsEditor = sp.edit();
         SensorDataListModel sensorModelData = gson.fromJson(sensorJsonData, SensorDataListModel.class);
         if (sensorModelData != null) {
+            Log.e(TAG, "Data in Cache..."+sensorModelData.getSensorModelList().size());
             for(SensorModel sensorModel:sensorModelData.getSensorModelList()){
-                params.put("accelerometerX", String.valueOf(sensorModel.getAccelerometerXValue()));
-                params.put("accelerometerY", String.valueOf(sensorModel.getAccelerometerYValue()));
-                params.put("accelerometerZ", String.valueOf(sensorModel.getAccelerometerZValue()));
+                Log.e(TAG, "Call RestAPI: "+ sensorModel.getAccelerometerXValue());
+                params.put("accelarometerX", String.valueOf(sensorModel.getAccelerometerXValue()));
+                params.put("accelarometerY", String.valueOf(sensorModel.getAccelerometerYValue()));
+                params.put("accelarometerZ", String.valueOf(sensorModel.getAccelerometerZValue()));
                 params.put("proximity", String.valueOf(sensorModel.getProximity()));
                 restApi.sendRequestPost(context, params);
                 params.clear();
             }
         }
-        sp.edit().remove("SensorKey");
+        prefsEditor.remove("SensorKey").apply();
+        Log.e(TAG, "API call done...");
     }
 
     public void saveInShared(Context context, SensorModel sensorModel, String key) {

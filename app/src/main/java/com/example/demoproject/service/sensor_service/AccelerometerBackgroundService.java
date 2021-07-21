@@ -53,29 +53,20 @@ public class AccelerometerBackgroundService  extends Service implements SensorEv
     private Context context;
     Handler handler = new Handler(Looper.getMainLooper());
     private String CHANNEL_ID = "101";
+    DataHandle dataHandle = DataHandle.getDataHandle();
+    SensorModel sensorModel = new SensorModel();
 
     public AccelerometerBackgroundService(Context context){
         this.context = context;
     }
 
-    public AccelerometerBackgroundService(){};
+    public AccelerometerBackgroundService(){}
 
     public static AccelerometerBackgroundService getAccelerometerBackground(Context context) {
         if(accelerometerBackground==null){
             accelerometerBackground = new AccelerometerBackgroundService(context);
         }
         return accelerometerBackground;
-    }
-
-    public void StartListener(){
-        Log.e(TAG, "StartListener started");
-        sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        sensorManager.registerListener(this, proximity,
-                SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, sensor,
-                SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -86,6 +77,7 @@ public class AccelerometerBackgroundService  extends Service implements SensorEv
         }else if(event.sensor.getType()==Sensor.TYPE_PROXIMITY){
             sensorManager.unregisterListener(this,proximity);
         }
+        dataHandle.saveInShared(getApplicationContext(), sensorModel,"SensorKey");
         // stop the service
         stopForeground(true);
         stopSelf();
@@ -120,11 +112,13 @@ public class AccelerometerBackgroundService  extends Service implements SensorEv
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
-        sensorManager.registerListener(this, proximity,
-                SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, sensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, proximity,
+                SensorManager.SENSOR_DELAY_NORMAL);
 
+        Log.e(TAG, "Service: "+sensorModel.getAccelerometerYValue());
+        Log.e(TAG, "Service End...");
         return START_STICKY;
     }
 
@@ -138,18 +132,17 @@ public class AccelerometerBackgroundService  extends Service implements SensorEv
                 xValue = event.values[0];
                 yValue = event.values[1];
                 zValue = event.values[2];
-            }else if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+                sensorModel.setAccelerometerXValue(xValue);
+                sensorModel.setAccelerometerYValue(yValue);
+                sensorModel.setAccelerometerZValue(zValue);
+                Log.e(TAG, "Accelerometer X: "+sensorModel.getAccelerometerXValue());
+                Log.e(TAG, "Accelerometer Y: "+sensorModel.getAccelerometerYValue());
+                Log.e(TAG, "Accelerometer Z: "+sensorModel.getAccelerometerZValue());
+            }else if(event.sensor.getType()==Sensor.TYPE_PROXIMITY){
                 proximityValue = event.values[0];
+                sensorModel.setProximity(proximityValue);
+                Log.e(TAG, "Proximity : "+sensorModel.getProximity());
             }
-            DataHandle dataHandle = DataHandle.getDataHandle();
-            SensorModel sensorModel = SensorModel.getSensorModel();
-            sensorModel.setAccelerometerXValue(xValue);
-            sensorModel.setAccelerometerYValue(yValue);
-            sensorModel.setAccelerometerZValue(zValue);
-            sensorModel.setProximity(proximityValue);
-            dataHandle.saveInShared(getApplicationContext(), sensorModel,"SensorKey");
-            Log.e(TAG, "Save Data in Shared");
-            Log.d(TAG, "Value:- "+yValue);
             handler.postDelayed(() -> {
                 // Run your task here
                 Toast.makeText(getApplicationContext(), "Worker Save data cache", Toast.LENGTH_SHORT).show();

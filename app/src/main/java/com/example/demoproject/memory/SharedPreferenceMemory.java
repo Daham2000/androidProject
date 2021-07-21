@@ -39,7 +39,7 @@ public class SharedPreferenceMemory {
     //Save data in phone memory (SharedPreferences save data)
     public void saveInShared(SensorModel sm,String key) {
         SharedPreferences sp = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        String sensorJsonData = sp.getString("SensorKey", "");
+        String sensorJsonData = sp.getString(key, "");
         SensorDataListModel sensorDataListModel = gson.fromJson(sensorJsonData, SensorDataListModel.class);
         if(sensorDataListModel==null){
             sensorDataListModel = new SensorDataListModel();

@@ -31,7 +31,6 @@ public class SaveDataJobService extends JobService {
                 Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                 AccelerometerBackgroundService accelerometerBackgroundService =
                         AccelerometerBackgroundService.getAccelerometerBackground(getApplicationContext());
-                accelerometerBackgroundService.StartListener();
             }
         };
         exacter.execute();
