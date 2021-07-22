@@ -53,17 +53,6 @@ public class SaveDataWorker extends Worker {
         Intent serviceIntent = new Intent(getApplicationContext(), AccelerometerBackgroundService.class);
 
         ContextCompat.startForegroundService(getApplicationContext(),serviceIntent);
-//        AccelerometerBackgroundService accelerometerBackgroundService =
-//                AccelerometerBackgroundService.getAccelerometerBackground(getApplicationContext());
-//        accelerometerBackgroundService.StartListener();
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Run your task here
-                Toast.makeText(getApplicationContext(), "Worker Save data cache", Toast.LENGTH_SHORT).show();
-            }
-        }, 2000 );
         return Result.success();
     }
 
