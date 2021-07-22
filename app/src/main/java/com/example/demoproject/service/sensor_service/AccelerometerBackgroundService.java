@@ -154,26 +154,15 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
                 Log.e(TAG, "Accelerometer Y: " + sensorModel.getAccelerometerYValue());
                 Log.e(TAG, "Accelerometer Z: " + sensorModel.getAccelerometerZValue());
                 stopAccelerometer();
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, "Accelerometer");
             } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-                sensorModel.setMagnetometerXValue(event.values[0]);
-                sensorModel.setAccelerometerYValue(event.values[1]);
-                sensorModel.setAccelerometerZValue(event.values[2]);
-                Log.e(TAG, "Magnetometer X: " + sensorModel.getMagnetometerXValue());
-                Log.e(TAG, "Magnetometer Y: " + sensorModel.getMagnetometerYValue());
-                Log.e(TAG, "Magnetometer Z: " + sensorModel.getMagnetometerZValue());
                 stopMagnetometer();
             } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-                sensorModel.setGyroscopeXValue(event.values[0]);
-                sensorModel.setGyroscopeYValue(event.values[1]);
-                sensorModel.setGyroscopeZValue(event.values[2]);
-                Log.e(TAG, "GYROSCOPE X: " + sensorModel.getGyroscopeXValue());
-                Log.e(TAG, "GYROSCOPE Y: " + sensorModel.getGyroscopeZValue());
-                Log.e(TAG, "GYROSCOPE Z: " + sensorModel.getGyroscopeZValue());
                 stopGyro();
             } else if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-                sensorModel.setProximity(event.values[0]);
-                Log.e(TAG, "Proximity : " + sensorModel.getProximity());
                 stopProximity();
+                sensorModel.setProximity(event.values[0]);
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, "Proximity");
             }
             return null;
         }
@@ -195,7 +184,6 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
     public void onDestroy() {
         Log.e(TAG, "Destroyed Sensor service");
         Log.d(TAG, "onDestroy Data " + sensorModel.getAccelerometerZValue());
-        dataHandle.saveInShared(getApplicationContext(), sensorModel, "SensorKey");
         super.onDestroy();
     }
 }

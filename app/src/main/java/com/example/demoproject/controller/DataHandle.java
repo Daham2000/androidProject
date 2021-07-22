@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.example.demoproject.api.RestApi;
 import com.example.demoproject.memory.SharedPreferenceMemory;
+import com.example.demoproject.model.ProximityModel;
 import com.example.demoproject.model.SensorDataListModel;
 import com.example.demoproject.model.SensorModel;
 import com.example.demoproject.sensor.AccelerometerSensorManage;
@@ -38,22 +39,27 @@ public class DataHandle {
 
     public void callRestAPI(Context context) {
         SharedPreferences sp = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        String sensorJsonData = sp.getString("SensorKey", "");
+        String sensorJsonData = sp.getString("Accelerometer", "");
+        String proximityJsonData = sp.getString("Proximity", "");
         SharedPreferences.Editor prefsEditor = sp.edit();
         SensorDataListModel sensorModelData = gson.fromJson(sensorJsonData, SensorDataListModel.class);
+        ProximityModel proximity = gson.fromJson(proximityJsonData, ProximityModel.class);
         if (sensorModelData != null) {
             Log.e(TAG, "Data in Cache..."+sensorModelData.getSensorModelList().size());
-            for(SensorModel sensorModel:sensorModelData.getSensorModelList()){
-                Log.e(TAG, "Call RestAPI: "+ sensorModel.getAccelerometerXValue());
-                params.put("accelarometerX", String.valueOf(sensorModel.getAccelerometerXValue()));
-                params.put("accelarometerY", String.valueOf(sensorModel.getAccelerometerYValue()));
-                params.put("accelarometerZ", String.valueOf(sensorModel.getAccelerometerZValue()));
-                params.put("proximity", String.valueOf(sensorModel.getProximity()));
+            for(int i=0; i<sensorModelData.getSensorModelList().size();i++){
+                Log.e(TAG, "Call RestAPI: "+ sensorModelData.getSensorModelList().get(i).getAccelerometerXValue());
+                params.put("accelarometerX", String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerXValue()));
+                params.put("accelarometerY", String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerYValue()));
+                params.put("accelarometerZ", String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerZValue()));
+                if(proximity!=null){
+                    params.put("pressure", String.valueOf(proximity.getProximityModelList().get(i).getProximity()));
+                }
                 restApi.sendRequestPost(context, params);
                 params.clear();
             }
         }
-        prefsEditor.remove("SensorKey").apply();
+        prefsEditor.remove("Accelerometer").apply();
+        prefsEditor.remove("pressure").apply();
         Log.e(TAG, "API call done...");
     }
 
