@@ -33,6 +33,7 @@ import com.example.demoproject.R;
 import com.example.demoproject.controller.DataHandle;
 import com.example.demoproject.model.SensorModel;
 import com.example.demoproject.sensor.AccelerometerSensorManage;
+import com.example.demoproject.utill.AppKey;
 
 import java.util.concurrent.TimeUnit;
 
@@ -154,15 +155,17 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
                 Log.e(TAG, "Accelerometer Y: " + sensorModel.getAccelerometerYValue());
                 Log.e(TAG, "Accelerometer Z: " + sensorModel.getAccelerometerZValue());
                 stopAccelerometer();
-                dataHandle.saveInShared(getApplicationContext(), sensorModel, "Accelerometer");
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Accelerometer);
             } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                 stopMagnetometer();
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.MagneticField);
             } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
                 stopGyro();
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Gyroscope);
             } else if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
                 stopProximity();
                 sensorModel.setProximity(event.values[0]);
-                dataHandle.saveInShared(getApplicationContext(), sensorModel, "Proximity");
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Proximity);
             }
             return null;
         }

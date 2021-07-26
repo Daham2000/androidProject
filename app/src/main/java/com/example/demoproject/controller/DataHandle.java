@@ -19,6 +19,7 @@ import com.example.demoproject.sensor.MagnetometerSensorManage;
 import com.example.demoproject.sensor.PressureSensorManage;
 import com.example.demoproject.sensor.ProximitySensorManage;
 import com.example.demoproject.sensor.TempSensorManage;
+import com.example.demoproject.utill.AppKey;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -39,8 +40,8 @@ public class DataHandle {
 
     public void callRestAPI(Context context) {
         SharedPreferences sp = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
-        String sensorJsonData = sp.getString("Accelerometer", "");
-        String proximityJsonData = sp.getString("Proximity", "");
+        String sensorJsonData = sp.getString(AppKey.Accelerometer, "");
+        String proximityJsonData = sp.getString(AppKey.Proximity, "");
         SharedPreferences.Editor prefsEditor = sp.edit();
         SensorDataListModel sensorModelData = gson.fromJson(sensorJsonData, SensorDataListModel.class);
         ProximityModel proximity = gson.fromJson(proximityJsonData, ProximityModel.class);
@@ -58,8 +59,10 @@ public class DataHandle {
                 params.clear();
             }
         }
-        prefsEditor.remove("Accelerometer").apply();
-        prefsEditor.remove("pressure").apply();
+        prefsEditor.remove(AppKey.Accelerometer).apply();
+        prefsEditor.remove(AppKey.Proximity).apply();
+        prefsEditor.remove(AppKey.Gyroscope).apply();
+        prefsEditor.remove(AppKey.MagneticField).apply();
         Log.e(TAG, "API call done...");
     }
 
