@@ -27,10 +27,13 @@ import com.example.demoproject.sensor.TempSensorManage;
 import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
 import com.example.demoproject.service.worker.ApiCallWorker;
 import com.example.demoproject.service.worker.SaveDataWorker;
+import com.example.demoproject.utill.AppKey;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -100,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Start worker method for get Data from Sensor and save it on shared memory
     private void settingUpPeriodicWorkSaveData() {
-        String workTag = "SaveData";
+        String workTag = AppKey.SaveDataTag;
         PeriodicWorkRequest periodicSendDataWork =
                 new PeriodicWorkRequest.Builder(SaveDataWorker.class, 15, TimeUnit.MINUTES)
                         .addTag(workTag)
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 // The Worker needs Network connectivity
                 .setRequiredNetworkType(NetworkType.UNMETERED)
                 .build();
-        String workTagTwo = "SendData";
+        String workTagTwo = AppKey.SendDataTag;
         PeriodicWorkRequest periodicSendDataWork =
                 new PeriodicWorkRequest.Builder(ApiCallWorker.class, 30, TimeUnit.MINUTES)
                         .addTag(workTagTwo)
@@ -139,13 +142,13 @@ public class MainActivity extends AppCompatActivity {
         SecretKey secret = generateKey();
         byte[] encryptedData = encryptMsg("1qwerREWQ2", secret);
         String decryptedData = decryptMsg(encryptedData, secret);
-        Log.d(TAG, "Encrypted Data: "+ encryptedData);
-        Log.d(TAG, "Decrypted Data: "+decryptedData);
+        Log.d(TAG, "Encrypted Data: " + encryptedData);
+        Log.d(TAG, "Decrypted Data: " + decryptedData);
     }
 
     public SecretKey generateKey()
-            throws Exception{
-        KeyGenerator keygen = KeyGenerator.getInstance("AES");
+            throws Exception {
+        KeyGenerator keygen = KeyGenerator.getInstance(AppKey.Algorithm);
         keygen.init(256);
         return keygen.generateKey();
     }
@@ -166,5 +169,40 @@ public class MainActivity extends AppCompatActivity {
         cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, secret);
         return new String(cipher.doFinal(cipherText), StandardCharsets.UTF_8);
+    }
+
+    public void compressData(View view) {
+        try {
+            // Encode a String into bytes
+            //This line repreasant the data that we want to
+            String inputString = "blahblahblahddddddd ddddddddddd qqqqqqqqqqqq dddddddddddddddddddd" +
+                    "wwwwwwwwwww wwwwwwwwww zzzzzzzzz x xssaw         ggggggggg";
+            byte[] input = inputString.getBytes("UTF-8");
+
+            // Compress the bytes
+            byte[] output = new byte[100];
+            Deflater compresser = new Deflater();
+            compresser.setInput(input);
+            compresser.finish();
+            int compressedDataLength = compresser.deflate(output);
+            Log.d(TAG, "Compressed Data length: "+compressedDataLength);
+            compresser.end();
+
+            // Decompress the bytes
+            Inflater deCompressor = new Inflater();
+            deCompressor.setInput(output, 0, compressedDataLength);
+            byte[] result = new byte[inputString.length()];
+            int resultLength = deCompressor.inflate(result);
+            Log.d(TAG, "Decompressed Data length: "+resultLength);
+            deCompressor.end();
+
+            // Decode the bytes into a String
+            String outputString = new String(result, 0, resultLength, StandardCharsets.UTF_8);
+            Log.d(TAG, "Final output:- "+outputString);
+        } catch(java.io.UnsupportedEncodingException ex) {
+            // handle
+        } catch (java.util.zip.DataFormatException ex) {
+            // handle
+        }
     }
 }
