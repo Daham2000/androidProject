@@ -33,7 +33,11 @@ public class ApiCallWorker extends Worker {
     public Result doWork() {
         Log.d(TAG, "doWork: Work is done.");
         DataHandle dataHandle = DataHandle.getDataHandle();
-        dataHandle.callRestAPI(getApplicationContext());
+        try {
+            dataHandle.callRestAPI(getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return Result.success();
     }
 

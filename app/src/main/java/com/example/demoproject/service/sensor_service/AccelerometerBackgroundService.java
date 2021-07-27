@@ -49,10 +49,10 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
     private Sensor proximity;
     private Sensor magnetometer;
     private Sensor gyroscope;
-    private static float xValue = 0;
-    private static float yValue = 0;
-    private static float zValue = 0;
-    private static float proximityValue = 0;
+    private Sensor light;
+    private Sensor temperature;
+    private Sensor humidity;
+    private Sensor pressure;
     private Context context;
     private String CHANNEL_ID = "101";
     DataHandle dataHandle = DataHandle.getDataHandle();
@@ -109,6 +109,10 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
         proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        pressure = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        temperature = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        humidity = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
 
         sensorManager.registerListener(this, sensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
@@ -117,6 +121,14 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
         sensorManager.registerListener(this, proximity,
                 SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, gyroscope,
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, pressure,
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, temperature,
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, light,
+                SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, humidity,
                 SensorManager.SENSOR_DELAY_NORMAL);
         Log.e(TAG, "Service End...");
         // stop the service
@@ -141,6 +153,22 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
         sensorManager.unregisterListener(this, proximity);
     }
 
+    void stopPressure() {
+        sensorManager.unregisterListener(this, pressure);
+    }
+
+    void stopLight() {
+        sensorManager.unregisterListener(this, light);
+    }
+
+    void stopTemp() {
+        sensorManager.unregisterListener(this, temperature);
+    }
+
+    void stopHumidity() {
+        sensorManager.unregisterListener(this, humidity);
+    }
+
     //Save data in Shared and get data from sensor
     private class SensorEventLoggerTask extends
             AsyncTask<SensorEvent, Void, Void> {
@@ -151,21 +179,40 @@ public class AccelerometerBackgroundService extends Service implements SensorEve
                 sensorModel.setAccelerometerXValue(event.values[0]);
                 sensorModel.setAccelerometerYValue(event.values[1]);
                 sensorModel.setAccelerometerZValue(event.values[2]);
-                Log.e(TAG, "Accelerometer X: " + sensorModel.getAccelerometerXValue());
-                Log.e(TAG, "Accelerometer Y: " + sensorModel.getAccelerometerYValue());
-                Log.e(TAG, "Accelerometer Z: " + sensorModel.getAccelerometerZValue());
                 stopAccelerometer();
                 dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Accelerometer);
             } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                 stopMagnetometer();
+                sensorModel.setMagnetometerXValue(event.values[0]);
+                sensorModel.setMagnetometerYValue(event.values[1]);
+                sensorModel.setMagnetometerZValue(event.values[2]);
                 dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.MagneticField);
             } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
                 stopGyro();
+                sensorModel.setGyroscopeXValue(event.values[0]);
+                sensorModel.setGyroscopeYValue(event.values[1]);
+                sensorModel.setGyroscopeZValue(event.values[2]);
                 dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Gyroscope);
             } else if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
                 stopProximity();
                 sensorModel.setProximity(event.values[0]);
                 dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Proximity);
+            }else if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
+                stopPressure();
+                sensorModel.setPressure(event.values[0]);
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Pressure);
+            }else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                stopLight();
+                sensorModel.setLight(event.values[0]);
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Light);
+            }else if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+                stopTemp();
+                sensorModel.setTemperature(event.values[0]);
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Temperature);
+            }else if (event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
+                stopHumidity();
+                sensorModel.setHumidity(event.values[0]);
+                dataHandle.saveInShared(getApplicationContext(), sensorModel, AppKey.Humidity);
             }
             return null;
         }

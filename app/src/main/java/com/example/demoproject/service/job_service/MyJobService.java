@@ -33,7 +33,11 @@ public class MyJobService extends JobService {
                 jobFinished(params,false);
                 Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
                 DataHandle dataHandle = DataHandle.getDataHandle();
-                dataHandle.callRestAPI(getApplicationContext());
+                try {
+                    dataHandle.callRestAPI(getApplicationContext());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
 

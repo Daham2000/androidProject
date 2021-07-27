@@ -18,7 +18,11 @@ public class ApiService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         DataHandle dataHandle = DataHandle.getDataHandle();
-        dataHandle.callRestAPI(getApplicationContext());
+        try {
+            dataHandle.callRestAPI(getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return START_STICKY;
     }
 

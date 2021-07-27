@@ -11,16 +11,49 @@ public class SensorModel {
     private float gyroscopeYValue;
     private float gyroscopeZValue;
     private float proximity;
+    private float pressure;
+    private float light;
+    private float temperature;
+    private float humidity;
 
     private static SensorModel sensorModel;
 
     public SensorModel() {
     }
 
+    public float getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(float pressure) {
+        this.pressure = pressure;
+    }
+
+    public float getLight() {
+        return light;
+    }
+
+    public void setLight(float light) {
+        this.light = light;
+    }
+
+    public float getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(float temperature) {
+        this.temperature = temperature;
+    }
+
+    public float getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(float humidity) {
+        this.humidity = humidity;
+    }
+
     public static SensorModel getSensorModel() {
-        if (sensorModel == null) {
-            sensorModel = new SensorModel();
-        }
         return sensorModel;
     }
 

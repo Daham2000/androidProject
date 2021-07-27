@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.demoproject.model.GyroModel;
 import com.example.demoproject.model.ProximityModel;
 import com.example.demoproject.model.SensorDataListModel;
 import com.example.demoproject.model.SensorModel;
 import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
+import com.example.demoproject.utill.AppKey;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class SharedPreferenceMemory {
         SharedPreferences sp = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
         String sensorJsonData = sp.getString(key, "");
         String jsonData = "";
-        if (key == "Accelerometer") {
+        if (key == AppKey.Accelerometer) {
             SensorDataListModel sensorDataListModel = gson.fromJson(sensorJsonData, SensorDataListModel.class);
             if (sensorDataListModel == null) {
                 sensorDataListModel = new SensorDataListModel();
@@ -54,7 +56,8 @@ public class SharedPreferenceMemory {
             } else {
                 sensorDataListModel.getSensorModelList().add(sm);
             }
-        } else if (key == "Proximity") {
+            Log.e(TAG, "saveInShared: "+sensorDataListModel.getSensorModelList());
+        } else if (key == AppKey.Proximity) {
             ProximityModel.Proximity proximity = new ProximityModel.Proximity();
             proximity.setProximity(sm.getProximity());
             ProximityModel proximityList = gson.fromJson(sensorJsonData, ProximityModel.class);
@@ -68,6 +71,21 @@ public class SharedPreferenceMemory {
                 proximityList.getProximityModelList().add(proximity);
             }
             Log.e(TAG, "saveInShared: "+proximity.getProximity());
+        }else if (key == AppKey.Gyroscope) {
+            GyroModel.Gyroscope gyroscope= new GyroModel.Gyroscope();
+            gyroscope.setGyroscopeX(sm.getGyroscopeXValue());
+            gyroscope.setGyroscopeY(sm.getGyroscopeYValue());
+            gyroscope.setGyroscopeZ(sm.getGyroscopeZValue());
+            GyroModel gyroModel = gson.fromJson(sensorJsonData, GyroModel.class);
+            if (gyroModel == null) {
+                gyroModel = new GyroModel();
+                ArrayList<GyroModel.Gyroscope> gyroscopeArrayList = new ArrayList<>();
+                gyroscopeArrayList.add(gyroscope);
+                gyroModel.setGyroscopeArrayList(gyroscopeArrayList);
+                jsonData = gson.toJson(gyroModel);
+            } else {
+                gyroModel.getGyroscopeArrayList().add(gyroscope);
+            }
         }
         SharedPreferences.Editor prefsEditor = sp.edit();
         if (jsonData != "") {

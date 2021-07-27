@@ -7,6 +7,10 @@ public class AppKey {
     public static String Proximity = "Proximity";
     public static String Gyroscope = "Gyroscope";
     public static String MagneticField = "MagneticField";
+    public static String Pressure = "Pressure";
+    public static String Light = "Light";
+    public static String Temperature = "Temperature";
+    public static String Humidity = "Humidity";
 
     //Worker tags
     public static String SaveDataTag = "SaveData";

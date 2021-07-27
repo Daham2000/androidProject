@@ -1,5 +1,6 @@
 package com.example.demoproject;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -10,6 +11,7 @@ import androidx.work.WorkManager;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Messenger;
 import android.util.Log;
@@ -29,21 +31,29 @@ import com.example.demoproject.service.worker.ApiCallWorker;
 import com.example.demoproject.service.worker.SaveDataWorker;
 import com.example.demoproject.utill.AppKey;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.spec.MGF1ParameterSpec;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.Deflater;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
 import javax.crypto.spec.SecretKeySpec;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Main Activity";
-    Cipher cipher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,71 +148,11 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void encryptData(View view) throws Exception {
-        SecretKey secret = generateKey();
-        byte[] encryptedData = encryptMsg("1qwerREWQ2", secret);
-        String decryptedData = decryptMsg(encryptedData, secret);
-        Log.d(TAG, "Encrypted Data: " + encryptedData);
-        Log.d(TAG, "Decrypted Data: " + decryptedData);
-    }
-
-    public SecretKey generateKey()
-            throws Exception {
-        KeyGenerator keygen = KeyGenerator.getInstance(AppKey.Algorithm);
-        keygen.init(256);
-        return keygen.generateKey();
-    }
-
-    @SuppressLint("GetInstance")
-    public byte[] encryptMsg(String message, SecretKey secret)
-            throws Exception {
-        /* Encrypt the message. */
-        cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secret);
-        return cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
-    }
-
-    @SuppressLint("GetInstance")
-    public String decryptMsg(byte[] cipherText, SecretKey secret)
-            throws Exception {
-        /* Decrypt the message, given derived encContentValues and initialization vector. */
-        cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, secret);
-        return new String(cipher.doFinal(cipherText), StandardCharsets.UTF_8);
-    }
-
-    public void compressData(View view) {
-        try {
-            // Encode a String into bytes
-            //This line repreasant the data that we want to
-            String inputString = "blahblahblahddddddd ddddddddddd qqqqqqqqqqqq dddddddddddddddddddd" +
-                    "wwwwwwwwwww wwwwwwwwww zzzzzzzzz x xssaw         ggggggggg";
-            byte[] input = inputString.getBytes("UTF-8");
-
-            // Compress the bytes
-            byte[] output = new byte[100];
-            Deflater compresser = new Deflater();
-            compresser.setInput(input);
-            compresser.finish();
-            int compressedDataLength = compresser.deflate(output);
-            Log.d(TAG, "Compressed Data length: "+compressedDataLength);
-            compresser.end();
-
-            // Decompress the bytes
-            Inflater deCompressor = new Inflater();
-            deCompressor.setInput(output, 0, compressedDataLength);
-            byte[] result = new byte[inputString.length()];
-            int resultLength = deCompressor.inflate(result);
-            Log.d(TAG, "Decompressed Data length: "+resultLength);
-            deCompressor.end();
-
-            // Decode the bytes into a String
-            String outputString = new String(result, 0, resultLength, StandardCharsets.UTF_8);
-            Log.d(TAG, "Final output:- "+outputString);
-        } catch(java.io.UnsupportedEncodingException ex) {
-            // handle
-        } catch (java.util.zip.DataFormatException ex) {
-            // handle
-        }
+    public void compressData(View view) throws IOException {
+        WorkManager workManager = WorkManager.getInstance(this);
+        workManager.cancelAllWorkByTag(AppKey.SaveDataTag);
+        workManager.cancelAllWorkByTag(AppKey.SendDataTag);
+        settingUpPeriodicWorkSaveData();
+        settingUpPeriodicWorkSendData();
     }
 }
