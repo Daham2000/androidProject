@@ -86,10 +86,6 @@ public class DataHandle {
     }
 
     public void callRestAPI(Context context) throws Exception {
-
-        SecretKey secret = generateKey();
-        byte[] encryptedData;
-
         SharedPreferences sp = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
         String sensorJsonData = sp.getString(AppKey.Accelerometer, "");
         String proximityJsonData = sp.getString(AppKey.Proximity, "");
@@ -100,15 +96,11 @@ public class DataHandle {
             Log.e(TAG, "Data in Cache..." + sensorModelData.getSensorModelList().size());
             for (int i = 0; i < sensorModelData.getSensorModelList().size(); i++) {
                 Log.e(TAG, "Call RestAPI: " + sensorModelData.getSensorModelList().get(i).getAccelerometerXValue());
-                encryptedData = encryptMsg(String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerXValue()), secret);
-                params.put("accelarometerX", String.valueOf(encryptedData));
-                encryptedData = encryptMsg(String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerYValue()), secret);
-                params.put("accelarometerY", String.valueOf(encryptedData));
-                encryptedData = encryptMsg(String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerZValue()), secret);
-                params.put("accelarometerZ", String.valueOf(encryptedData));
+                params.put("accelarometerX", String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerXValue()));
+                params.put("accelarometerY", String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerYValue()));
+                params.put("accelarometerZ", String.valueOf(sensorModelData.getSensorModelList().get(i).getAccelerometerZValue()));
                 if (proximity != null) {
-                    encryptedData = encryptMsg(String.valueOf(sensorModelData.getSensorModelList().get(i).getProximity()), secret);
-                    params.put("proximity", String.valueOf(encryptedData));
+                    params.put("proximity", String.valueOf(sensorModelData.getSensorModelList().get(i).getProximity()));
                 }
                 restApi.sendRequestPost(context, params);
                 params.clear();
