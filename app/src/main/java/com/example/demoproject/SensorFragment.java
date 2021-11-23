@@ -22,14 +22,12 @@ import com.example.demoproject.sensor.PressureSensorManage;
 import com.example.demoproject.sensor.ProximitySensorManage;
 import com.example.demoproject.sensor.TempSensorManage;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link SecondFragment#newInstance} factory method to
+ * Use the {@link SensorFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SecondFragment extends Fragment {
+public class SensorFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,7 +38,7 @@ public class SecondFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public SecondFragment() {
+    public SensorFragment() {
         // Required empty public constructor
     }
 
@@ -53,8 +51,8 @@ public class SecondFragment extends Fragment {
      * @return A new instance of fragment SecondFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SecondFragment newInstance(String param1, String param2) {
-        SecondFragment fragment = new SecondFragment();
+    public static SensorFragment newInstance(String param1, String param2) {
+        SensorFragment fragment = new SensorFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

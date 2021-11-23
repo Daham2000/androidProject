@@ -1,15 +1,5 @@
 package com.example.demoproject;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-
-import org.jetbrains.annotations.NotNull;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -28,12 +18,12 @@ public class FragmentAdapter extends FragmentStateAdapter {
         switch (position)
         {
             case 1 :
-                return new SecondFragment();
+                return new SensorFragment();
             case 2 :
-                return new ThirdFragment();
+                return new SettingsFragment();
         }
 
-        return new FirstFragment();
+        return new HomeFragment();
     }
 
     @Override

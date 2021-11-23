@@ -1,37 +1,19 @@
 package com.example.demoproject;
 
-import android.hardware.SensorManager;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.example.demoproject.sensor.AccelerometerSensorManage;
-import com.example.demoproject.sensor.GyroscopeSensorManage;
-import com.example.demoproject.sensor.HumiditySensorManage;
-import com.example.demoproject.sensor.LightSensorManage;
-import com.example.demoproject.sensor.MagnetometerSensorManage;
-import com.example.demoproject.sensor.PressureSensorManage;
-import com.example.demoproject.sensor.ProximitySensorManage;
-import com.example.demoproject.sensor.TempSensorManage;
-
-import org.jetbrains.annotations.NotNull;
-
-import static android.content.Context.SENSOR_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FirstFragment#newInstance} factory method to
+ * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FirstFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,7 +24,7 @@ public class FirstFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public FirstFragment() {
+    public HomeFragment() {
         // Required empty public constructor
     }
 
@@ -55,8 +37,8 @@ public class FirstFragment extends Fragment {
      * @return A new instance of fragment FirstFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FirstFragment newInstance(String param1, String param2) {
-        FirstFragment fragment = new FirstFragment();
+    public static HomeFragment newInstance(String param1, String param2) {
+        HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

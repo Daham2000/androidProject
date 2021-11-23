@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.selectTab(tabLayout.getTabAt(position));
             }
         });
+
         settingUpPeriodicWorkSaveData();
         settingUpPeriodicWorkSendData();
     }
