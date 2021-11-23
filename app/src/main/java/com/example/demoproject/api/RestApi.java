@@ -31,10 +31,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -53,22 +58,22 @@ import javax.crypto.SecretKey;
 
 public class RestApi {
 
-    String URL = "https://androidsensorread.herokuapp.com/posts";
+//    String URL = "https://androidsensorread.herokuapp.com/posts";
 
     private static final String TAG = "RestApi";
 
     //Get method to get data from database (End point)
     public void sendRequestGet(Context context) {
         Log.d(TAG, "sendRequestGet");
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET,
-                URL,
-                null,
-                response -> Log.e("Response - ", response.toString()),
-                error -> {}
-        );
-        requestQueue.add(jsonObjectRequest);
+//        RequestQueue requestQueue = Volley.newRequestQueue(context);
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+//                Request.Method.GET,
+//                URL,
+//                null,
+//                response -> Log.e("Response - ", response.toString()),
+//                error -> {}
+//        );
+//        requestQueue.add(jsonObjectRequest);
     }
 
     Gson gson = new Gson();
@@ -105,22 +110,42 @@ public class RestApi {
     //Post method to sent data to data (End point)
     public void sendRequestPost(Context context, HashMap<String, String> params) throws Exception {
         SecretKey secret = generateKey();
+        URL url = new URL("https://androidsensorread.herokuapp.com/posts");
 
         String jsonObject = gson.toJson(params);
         byte[] encriped = encryptMsg(jsonObject, secret);
         byte[] compressedData = compressZ(encriped.toString());
+        String json = gson.toJson(compressedData);
 
-        JSONObject object = new JSONObject(compressedData.toString());
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        BufferedReader reader = null;
+        try {
+            //Sent post data
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(json);
+            wr.flush();
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.POST,
-                URL,
-                object,
-                response -> Log.e("Post Response - ", response.toString()),
-                error -> {
-                }
-        );
-        requestQueue.add(jsonObjectRequest);
+            // Get the server response
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+
+            // Read Server Response
+            while ((line = reader.readLine()) != null) {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+            Log.e(TAG, "sendRequestPost: " + sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (Exception ex) {
+            }
+        }
     }
+
 }
+

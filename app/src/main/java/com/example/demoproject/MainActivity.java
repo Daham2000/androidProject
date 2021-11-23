@@ -1,7 +1,13 @@
 package com.example.demoproject;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -30,6 +36,7 @@ import com.example.demoproject.service.sensor_service.AccelerometerBackgroundSer
 import com.example.demoproject.service.worker.ApiCallWorker;
 import com.example.demoproject.service.worker.SaveDataWorker;
 import com.example.demoproject.utill.AppKey;
+import com.google.android.material.tabs.TabLayout;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -55,58 +62,56 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Main Activity";
 
+    // Create object of ViewPager2
+    private ViewPager2 viewPager2;
+
+    //Tab layout
+    private TabLayout tabLayout;
+
+    //Fragment Adapter
+    private FragmentAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //initialize texView values
-        TextView xValue = findViewById(R.id.xValue);
-        //define TextView values
-        TextView yValue = findViewById(R.id.yValue);
-        TextView zValue = findViewById(R.id.zValue);
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager2 = findViewById(R.id.view_pager_2);
 
-        TextView gyXValue = findViewById(R.id.xGyroValue);
-        TextView gYValue = findViewById(R.id.yGyroValue);
-        TextView gyZValue = findViewById(R.id.zGyroValue);
+        FragmentManager fm = getSupportFragmentManager();
+        adapter = new FragmentAdapter(fm,getLifecycle());
 
-        TextView maXValue = findViewById(R.id.xMagnetoMeterValue);
-        TextView maYValue = findViewById(R.id.yMagnetoMeterValue);
-        TextView maZValue = findViewById(R.id.zMagnetoMeterValue);
+        viewPager2.setAdapter(adapter);
 
-        TextView lightValue = findViewById(R.id.light);
-        TextView pressureValue = findViewById(R.id.pressure);
-        TextView tempValue = findViewById(R.id.temp);
-        TextView humidityValue = findViewById(R.id.humidity);
-        TextView proximityValue = findViewById(R.id.proximity);
+        tabLayout.addTab(tabLayout.newTab().setText("Home"));
+        tabLayout.addTab(tabLayout.newTab().setText("Sensor"));
+        tabLayout.addTab(tabLayout.newTab().setText("Settings"));
 
-        //initialize sensor manager
-        final SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        //get the sensor accelerometer
-        AccelerometerSensorManage accelerometerSensor = new AccelerometerSensorManage(
-                sensorManager, xValue, yValue, zValue, this);
-        //get the sensor Gyroscope
-        GyroscopeSensorManage gyroscopeSensorManage = new GyroscopeSensorManage(
-                sensorManager, gyXValue, gYValue, gyZValue);
-        //get the sensor Magnetometer
-        MagnetometerSensorManage magnetometerSensorManage = new MagnetometerSensorManage(
-                sensorManager, maXValue, maYValue, maZValue);
-        //get the sensor Light
-        LightSensorManage lightSensorManage = new LightSensorManage(
-                sensorManager, lightValue);
-        //get the Pressure
-        PressureSensorManage pressureSensorManage = new PressureSensorManage(
-                sensorManager, pressureValue);
-        //get the Temperature sensor
-        TempSensorManage tempSensorManage = new TempSensorManage(
-                sensorManager, tempValue);
-        //get the Humidity sensor
-        HumiditySensorManage humiditySensorManage = new HumiditySensorManage(
-                sensorManager, humidityValue);
-        //get the proximity sensor
-        ProximitySensorManage proximitySensorManage = new ProximitySensorManage(
-                sensorManager, proximityValue);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
 
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+            }
+        });
         settingUpPeriodicWorkSaveData();
         settingUpPeriodicWorkSendData();
     }
@@ -148,11 +153,4 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void compressData(View view) throws IOException {
-        WorkManager workManager = WorkManager.getInstance(this);
-        workManager.cancelAllWorkByTag(AppKey.SaveDataTag);
-        workManager.cancelAllWorkByTag(AppKey.SendDataTag);
-        settingUpPeriodicWorkSaveData();
-        settingUpPeriodicWorkSendData();
-    }
 }

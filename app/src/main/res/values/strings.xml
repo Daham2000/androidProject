@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Sensor Check App</string>
     <string name="stopService">Stop service</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="first_fragment">First_fragment</string>
+    <string name="Second_fragment" />
 </resources>
