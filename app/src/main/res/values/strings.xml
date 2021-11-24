@@ -5,4 +5,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="first_fragment">First_fragment</string>
     <string name="Second_fragment" />
+    <string name="last_data_updated_time">Last Data updated time:</string>
+    <string name="_10_00_23_pm">10.00.23 PM</string>
+    <string name="last_data_uploaded_time" />
 </resources>

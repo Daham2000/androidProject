@@ -1,12 +1,7 @@
 package com.example.demoproject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -14,50 +9,16 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Messenger;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 import com.example.demoproject.controller.DataHandle;
-import com.example.demoproject.sensor.AccelerometerSensorManage;
-import com.example.demoproject.sensor.GyroscopeSensorManage;
-import com.example.demoproject.sensor.HumiditySensorManage;
-import com.example.demoproject.sensor.LightSensorManage;
-import com.example.demoproject.sensor.MagnetometerSensorManage;
-import com.example.demoproject.sensor.PressureSensorManage;
-import com.example.demoproject.sensor.ProximitySensorManage;
-import com.example.demoproject.sensor.TempSensorManage;
-import com.example.demoproject.service.sensor_service.AccelerometerBackgroundService;
 import com.example.demoproject.service.worker.ApiCallWorker;
 import com.example.demoproject.service.worker.SaveDataWorker;
 import com.example.demoproject.utill.AppKey;
 import com.google.android.material.tabs.TabLayout;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.spec.MGF1ParameterSpec;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.Deflater;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-import java.util.zip.Inflater;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.OAEPParameterSpec;
-import javax.crypto.spec.PSource;
-import javax.crypto.spec.SecretKeySpec;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -120,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         settingUpPeriodicWorkSaveData();
         settingUpPeriodicWorkSendData();
     }
+
+
 
     //Start worker method for get Data from Sensor and save it on shared memory
     private void settingUpPeriodicWorkSaveData() {
