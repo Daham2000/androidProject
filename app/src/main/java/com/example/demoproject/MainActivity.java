@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.demoproject.controller.DataHandle;
 import com.example.demoproject.sensor.AccelerometerSensorManage;
 import com.example.demoproject.sensor.GyroscopeSensorManage;
 import com.example.demoproject.sensor.HumiditySensorManage;
@@ -68,9 +69,6 @@ public class MainActivity extends AppCompatActivity {
     //Tab layout
     private TabLayout tabLayout;
 
-    //Fragment Adapter
-    private FragmentAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,15 +78,16 @@ public class MainActivity extends AppCompatActivity {
         viewPager2 = findViewById(R.id.view_pager_2);
 
         FragmentManager fm = getSupportFragmentManager();
-        adapter = new FragmentAdapter(fm,getLifecycle());
+        //Fragment Adapter
+        FragmentAdapter adapter = new FragmentAdapter(fm, getLifecycle());
 
         viewPager2.setAdapter(adapter);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Home"));
-        tabLayout.addTab(tabLayout.newTab().setText("Sensor"));
-        tabLayout.addTab(tabLayout.newTab().setText("Settings"));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_home));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_sensor));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_settings));
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -112,7 +111,12 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.selectTab(tabLayout.getTabAt(position));
             }
         });
-
+        DataHandle dataHandle = DataHandle.getDataHandle();
+        try {
+            dataHandle.callRestAPI(getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         settingUpPeriodicWorkSaveData();
         settingUpPeriodicWorkSendData();
     }
@@ -136,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         String workTagTwo = AppKey.SendDataTag;
         PeriodicWorkRequest periodicSendDataWork =
-                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 30, TimeUnit.MINUTES)
+                new PeriodicWorkRequest.Builder(ApiCallWorker.class, 15, TimeUnit.MINUTES)
                         .addTag(workTagTwo)
                         .setInitialDelay(10, TimeUnit.SECONDS)
                         .setConstraints(constraints)

@@ -46,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
@@ -58,92 +59,41 @@ import javax.crypto.SecretKey;
 
 public class RestApi {
 
-//    String URL = "https://androidsensorread.herokuapp.com/posts";
+    final String url = "https://androidsensorread.herokuapp.com/posts";
 
     private static final String TAG = "RestApi";
 
     //Get method to get data from database (End point)
     public void sendRequestGet(Context context) {
         Log.d(TAG, "sendRequestGet");
-//        RequestQueue requestQueue = Volley.newRequestQueue(context);
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-//                Request.Method.GET,
-//                URL,
-//                null,
-//                response -> Log.e("Response - ", response.toString()),
-//                error -> {}
-//        );
-//        requestQueue.add(jsonObjectRequest);
-    }
-
-    Gson gson = new Gson();
-    Cipher cipher;
-
-    public SecretKey generateKey()
-            throws Exception {
-        KeyGenerator keygen = KeyGenerator.getInstance(AppKey.Algorithm);
-        keygen.init(256);
-        return keygen.generateKey();
-    }
-
-    @SuppressLint("GetInstance")
-    public byte[] encryptMsg(String message, SecretKey secret)
-            throws Exception {
-        /* Encrypt the message. */
-        cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secret);
-        byte[] input = message.getBytes();
-        cipher.update(input);
-        byte[] encryptedData = cipher.doFinal();
-        return compressZ(encryptedData.toString());
-    }
-
-    public static byte[] compressZ(String stringIn) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DeflaterOutputStream dos = new DeflaterOutputStream(baos);
-        dos.write(stringIn.getBytes());
-        dos.flush();
-        dos.close();
-        return baos.toByteArray();
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> Log.e("Response - ", response.toString()),
+                error -> {}
+        );
+        requestQueue.add(jsonObjectRequest);
     }
 
     //Post method to sent data to data (End point)
-    public void sendRequestPost(Context context, HashMap<String, String> params) throws Exception {
-        SecretKey secret = generateKey();
-        URL url = new URL("https://androidsensorread.herokuapp.com/posts");
+    public void sendRequestPost(Context context, HashMap<String, String> params) {
+        JSONObject json = new JSONObject(params);
 
-        String jsonObject = gson.toJson(params);
-        byte[] encriped = encryptMsg(jsonObject, secret);
-        byte[] compressedData = compressZ(encriped.toString());
-        String json = gson.toJson(compressedData);
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(context);
 
-        BufferedReader reader = null;
         try {
-            //Sent post data
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(json);
-            wr.flush();
+            JsonObjectRequest request = new JsonObjectRequest
+                    (Request.Method.POST, url, json, response -> {
+                    }, error -> {
+                        Log.d(TAG, "sendRequestPost: Error...");
+                    });
 
-            // Get the server response
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-
-            // Read Server Response
-            while ((line = reader.readLine()) != null) {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-            Log.e(TAG, "sendRequestPost: " + sb.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                reader.close();
-            } catch (Exception ex) {
-            }
+            queue.add(request);
+        } catch (Exception e) {
+            Log.d(TAG, "sendRequestPost: Error...");
         }
     }
 
