@@ -72,12 +72,12 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.selectTab(tabLayout.getTabAt(position));
             }
         });
-        DataHandle dataHandle = DataHandle.getDataHandle();
-        try {
-            dataHandle.callRestAPI(getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        DataHandle dataHandle = DataHandle.getDataHandle();
+//        try {
+//            dataHandle.callRestAPI(getApplicationContext());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         settingUpPeriodicWorkSaveData();
         settingUpPeriodicWorkSendData();
     }

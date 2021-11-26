@@ -1,10 +1,12 @@
 package com.example.demoproject;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,15 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.demoproject.utill.TableModel;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +44,18 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    // variable for our bar chart
+    BarChart barChart;
+
+    // variable for our bar data.
+    BarData barData;
+
+    // variable for our bar data set.
+    BarDataSet barDataSet;
+
+    // array list for storing entries.
+    ArrayList barEntriesArrayList;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -71,19 +94,74 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_first, container, false);
-        tableLayout = (TableLayout) rootView.findViewById(R.id.tableLayoutProduct);
+        tableLayout = rootView.findViewById(R.id.tableLayoutProduct);
         loadData();
+
+        // initializing variable for bar chart.
+        barChart = rootView.findViewById(R.id.idBarChart);
+
+        // calling method to get bar entries.
+        getBarEntries();
+
+        // creating a new bar data set.
+        barDataSet = new BarDataSet(barEntriesArrayList, "Accelerometer Data");
+
+        // creating a new bar data and
+        // passing our bar data set.
+        barData = new BarData(barDataSet);
+
+        // below line is to set data
+        // to our bar chart.
+        barChart.setData(barData);
+
+        // adding color to our bar data set.
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+
+        // setting text color.
+        barDataSet.setValueTextColor(Color.BLACK);
+
+        // setting text size
+        barDataSet.setValueTextSize(16f);
+
+        barChart.getDescription().setEnabled(false);
+
+        barChart.setFitBars(true); // make the x-axis fit exactly all bars
+        barChart.invalidate(); // refresh
+
+        final ArrayList<String> xAxisLabel = new ArrayList<>();
+        xAxisLabel.add("Mon");
+        xAxisLabel.add("Tue");
+        xAxisLabel.add("Wed");
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return xAxisLabel.get((int) value);
+
+            }
+        });
         return rootView;
     }
 
+    private void getBarEntries() {
+        // creating a new array list
+        barEntriesArrayList = new ArrayList<>();
+
+        // adding new entry to our array list with bar
+        // entry and passing x and y axis value to it.
+        barEntriesArrayList.add(new BarEntry(1f, 4));
+        barEntriesArrayList.add(new BarEntry(2f, 6));
+        barEntriesArrayList.add(new BarEntry(3f, 8));
+    }
+
     private void loadData() {
-        List<TableModel> tableModels = new ArrayList<TableModel>();
-        tableModels.add(new TableModel("10.00.12 PM", 12.99, 22, 22));
-        tableModels.add(new TableModel("06.02.12 AM", 1.99, 22, 22));
-        tableModels.add(new TableModel("09.11.12 PM", 2.22, 22, 22));
-        tableModels.add(new TableModel("08.22.12 PM", 1.22, 22, 22));
-        tableModels.add(new TableModel("03.00.12 AM", 3.00, 22, 22));
-        tableModels.add(new TableModel("02.00.12 PM", 4.90, 22, 22));
+        List<TableModel> tableModels = new ArrayList<>();
+        tableModels.add(new TableModel("10.00.12 PM   ", 12.99, 22.22, 22.33));
+        tableModels.add(new TableModel("06.02.12 AM   ", 1.99, 22.12, 22.22));
+        tableModels.add(new TableModel("09.11.12 PM   ", 2.22, 22.21, 22.54));
+        tableModels.add(new TableModel("08.22.12 PM   ", 1.22, 22.54, 22.65));
+        tableModels.add(new TableModel("03.00.12 AM   ", 3.00, 22.09, 22.12));
+        tableModels.add(new TableModel("02.00.12 PM   ", 4.90, 22.90, 22.76));
 
         createColumns();
         fillData(tableModels);
