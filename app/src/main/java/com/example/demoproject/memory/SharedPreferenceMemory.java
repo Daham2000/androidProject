@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.demoproject.model.DateTimeModel;
 import com.example.demoproject.model.GyroModel;
 import com.example.demoproject.model.ProximityModel;
 import com.example.demoproject.model.SensorDataListModel;
@@ -45,7 +46,7 @@ public class SharedPreferenceMemory {
         SharedPreferences sp = getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
         String sensorJsonData = sp.getString(key, "");
         String jsonData = "";
-        if (key == AppKey.Accelerometer) {
+        if (key.equals(AppKey.Accelerometer)) {
             SensorDataListModel sensorDataListModel = gson.fromJson(sensorJsonData, SensorDataListModel.class);
             if (sensorDataListModel == null) {
                 sensorDataListModel = new SensorDataListModel();
@@ -56,8 +57,8 @@ public class SharedPreferenceMemory {
             } else {
                 sensorDataListModel.getSensorModelList().add(sm);
             }
-            Log.e(TAG, "saveInShared: "+sensorDataListModel.getSensorModelList());
-        } else if (key == AppKey.Proximity) {
+            Log.e(TAG, "saveInShared: " + sensorDataListModel.getSensorModelList());
+        } else if (key.equals(AppKey.Proximity)) {
             ProximityModel.Proximity proximity = new ProximityModel.Proximity();
             proximity.setProximity(sm.getProximity());
             ProximityModel proximityList = gson.fromJson(sensorJsonData, ProximityModel.class);
@@ -70,9 +71,9 @@ public class SharedPreferenceMemory {
             } else {
                 proximityList.getProximityModelList().add(proximity);
             }
-            Log.e(TAG, "saveInShared: "+proximity.getProximity());
-        }else if (key == AppKey.Gyroscope) {
-            GyroModel.Gyroscope gyroscope= new GyroModel.Gyroscope();
+            Log.e(TAG, "saveInShared: " + proximity.getProximity());
+        } else if (key == AppKey.Gyroscope) {
+            GyroModel.Gyroscope gyroscope = new GyroModel.Gyroscope();
             gyroscope.setGyroscopeX(sm.getGyroscopeXValue());
             gyroscope.setGyroscopeY(sm.getGyroscopeYValue());
             gyroscope.setGyroscopeZ(sm.getGyroscopeZValue());
@@ -93,6 +94,34 @@ public class SharedPreferenceMemory {
             prefsEditor.putString(key, jsonData);
             prefsEditor.apply();
             Log.e(TAG, "Data saved in shared");
+        }
+    }
+
+    public void saveDataUploadTime(String time) {
+        //Save last data upload time
+        String jsonData = "";
+        SharedPreferences lastDataUploadTimeS = getSharedPreferences(AppKey.LastDataUploadTime, Context.MODE_PRIVATE);
+        String uploadTime = lastDataUploadTimeS.getString("UploadTime", "");
+        DateTimeModel dateTimeModel = gson.fromJson(uploadTime, DateTimeModel.class);
+        if (dateTimeModel == null) {
+            dateTimeModel = new DateTimeModel();
+            ArrayList<String> dateList = new ArrayList<>();
+            dateList.add(time);
+            dateTimeModel.setLastDataUploadTimeList(dateList);
+            jsonData = gson.toJson(dateTimeModel);
+        } else {
+            dateTimeModel.getLastDataUploadTimeList().add(time);
+            jsonData = gson.toJson(dateTimeModel);
+        }
+
+        SharedPreferences.Editor editor = lastDataUploadTimeS.edit();
+        editor.remove("UploadTime").apply();
+        editor.putString("UploadTime", jsonData).apply();
+
+        String uploadTimeInShared = lastDataUploadTimeS.getString("UploadTime", "");
+        DateTimeModel uploadTimeInSharedData = gson.fromJson(uploadTimeInShared, DateTimeModel.class);
+        if (uploadTimeInSharedData != null) {
+            Log.e(TAG, "Upload Time InShared: " + uploadTimeInSharedData.getLastDataUploadTimeList());
         }
     }
 }

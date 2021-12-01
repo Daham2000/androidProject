@@ -17,3 +17,4 @@ local.properties
 /gradlew.bat
 /.idea/
 /.idea/
+/app/private/key.jks

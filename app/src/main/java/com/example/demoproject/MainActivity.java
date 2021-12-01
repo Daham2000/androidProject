@@ -9,10 +9,13 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.example.demoproject.controller.DataHandle;
+import com.example.demoproject.memory.SharedPreferenceMemory;
 import com.example.demoproject.service.worker.ApiCallWorker;
 import com.example.demoproject.service.worker.SaveDataWorker;
 import com.example.demoproject.utill.AppKey;
@@ -72,17 +75,10 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.selectTab(tabLayout.getTabAt(position));
             }
         });
-//        DataHandle dataHandle = DataHandle.getDataHandle();
-//        try {
-//            dataHandle.callRestAPI(getApplicationContext());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+
         settingUpPeriodicWorkSaveData();
         settingUpPeriodicWorkSendData();
     }
-
-
 
     //Start worker method for get Data from Sensor and save it on shared memory
     private void settingUpPeriodicWorkSaveData() {

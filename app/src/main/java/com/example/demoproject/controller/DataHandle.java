@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.demoproject.api.RestApi;
 import com.example.demoproject.memory.SharedPreferenceMemory;
+import com.example.demoproject.model.DateTimeModel;
 import com.example.demoproject.model.ProximityModel;
 import com.example.demoproject.model.SensorDataListModel;
 import com.example.demoproject.model.SensorModel;
@@ -26,6 +27,7 @@ import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.DeflaterOutputStream;
 
@@ -85,8 +87,9 @@ public class DataHandle {
         return baos.toByteArray();
     }
 
-    public void callRestAPI(Context context) throws Exception {
-        SharedPreferences sp = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
+    public void callRestAPI(Context context) {
+        //Post data
+        SharedPreferences sp = context.getSharedPreferences(AppKey.SensorDetail, Context.MODE_PRIVATE);
         String sensorJsonData = sp.getString(AppKey.Accelerometer, "");
         String proximityJsonData = sp.getString(AppKey.Proximity, "");
         SharedPreferences.Editor prefsEditor = sp.edit();
@@ -111,10 +114,16 @@ public class DataHandle {
         prefsEditor.remove(AppKey.Gyroscope).apply();
         prefsEditor.remove(AppKey.MagneticField).apply();
         Log.e(TAG, "API call done...");
+
+        //Save last data upload time
+        SharedPreferences sharedPreferences = context.getSharedPreferences(AppKey.LastDataUploadTime, Context.MODE_PRIVATE);
+        SharedPreferenceMemory memory = SharedPreferenceMemory.getSharedPreferenceMemory();
+        memory.setSharedPreferences(sharedPreferences);
+        memory.saveDataUploadTime("2021.12.01");
     }
 
     public void saveInShared(Context context, SensorModel sensorModel, String key) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("SensorDetail", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(AppKey.SensorDetail, Context.MODE_PRIVATE);
         SharedPreferenceMemory memory = SharedPreferenceMemory.getSharedPreferenceMemory();
         memory.setSharedPreferences(sharedPreferences);
         memory.saveInShared(sensorModel, key);

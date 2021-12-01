@@ -19,4 +19,8 @@ public class AppKey {
     //Encryption key
     public static String Algorithm = "AES";
 
+    //Sensor details
+    public static String SensorDetail = "SensorDetail";
+    public static String LastDataUploadTime = "LastDataUploadTime";
+
 }
